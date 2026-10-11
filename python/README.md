@@ -1,10 +1,16 @@
 # Python services
 
-Specialized Python code lives here, separate from the Node.js backend.
+This directory contains specialized Python services used by PharmaSense. These services handle forecasting and chatbot processing while the Node.js backend remains responsible for application access control and core business operations.
 
-- `forecasting/`: demand forecasting code.
-- `chatbot/`: local business-chatbot service code.
+## Directory layout
 
-Add other services only when their implementation needs them. These folders do not define an API framework or deployment setup yet.
+| Directory      | Purpose                                                   |
+| -------------- | --------------------------------------------------------- |
+| `forecasting/` | Demand forecasting from historical sales data.            |
+| `chatbot/`     | Business-chatbot processing using a locally hosted model. |
 
-Add each service's real dependencies, Ruff lint/format checks, and relevant tests with its first implementation. Extend CI and Dependabot for the manifests you actually use. Keep model weights in the ignored root `model-weights/` directory and private datasets in `local-data/`, not in these source folders.
+The backend communicates with these services through internal APIs. Keep each service's source and dependencies with that service.
+
+Store model weights in the ignored root `model-weights/` directory and private datasets in `local-data/`. Neither belongs in the source tree.
+
+Service implementations, dependencies, tests, and Python lint/format configuration have not been added yet.

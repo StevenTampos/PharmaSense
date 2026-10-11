@@ -1,10 +1,16 @@
 # Database
 
-MySQL database source lives here.
+This directory contains the version-controlled MySQL schema and synthetic seed data for PharmaSense. It describes how the application database is created and changed, not the contents of a live pharmacy database.
 
-- `migrations/`: versioned schema changes. Choose the migration tool with the backend implementation.
-- `seeds/`: synthetic development or test records only.
+## Directory layout
 
-Use migrations as the source of truth for schema changes. Do not commit real pharmacy data, employee records, database exports, or backups. Keep backups in the ignored root `backups/` directory. A `.sql` file is not automatically safe just because it belongs in this folder.
+| Directory     | Purpose                                                        |
+| ------------- | -------------------------------------------------------------- |
+| `migrations/` | Ordered schema changes for tables, relationships, and indexes. |
+| `seeds/`      | Synthetic records for local development and tests.             |
 
-This scaffold does not create or connect to a database. Add executable migrations and setup instructions with the first database implementation.
+Use migrations to keep schema changes reproducible across the team's environments. Select the migration tool alongside the backend implementation.
+
+Never commit real pharmacy records, employee data, database exports, or backups. Keep backups in the ignored root `backups/` directory.
+
+Executable migrations and database setup commands have not been implemented yet.

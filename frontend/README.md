@@ -1,10 +1,20 @@
 # Frontend
 
-React and Tailwind CSS browser code lives here.
+The frontend contains the browser interface for PharmaSense, using React and Tailwind CSS. It is responsible for screens, reusable UI components, user interactions, and calls to the backend API.
 
-- `src/`: application source. Add `components/` for reusable UI, `pages/` for screens, and `services/` for backend API calls when needed.
-- `public/`: public static assets. Anything placed here may be served to users; never put private data or credentials here.
+## Directory layout
 
-Keep browser code inside `src/`; build-tool configuration belongs at the frontend root. The root ESLint configuration already supports JavaScript and JSX in `frontend/src/`.
+| Directory | Purpose                                                     |
+| --------- | ----------------------------------------------------------- |
+| `src/`    | React components, pages, styles, and API client code.       |
+| `public/` | Public static assets served without application processing. |
 
-This is a folder scaffold, not a runnable application. Add the frontend's package manifest and build setup with the first implementation. Use the backend API rather than connecting directly to MySQL.
+Build-tool configuration belongs at the frontend root. As source grows, organize `src/` into areas such as `components/`, `pages/`, and `services/`.
+
+## Boundaries
+
+- Request data and operations through the backend API; do not connect directly to MySQL.
+- Keep business-rule enforcement and authorization in the backend, even when the UI also validates input.
+- Never put secrets, private records, or biometric images in `public/`.
+
+The root ESLint configuration supports JavaScript and JSX in `frontend/src/`. The application entry point and build setup have not been implemented yet.

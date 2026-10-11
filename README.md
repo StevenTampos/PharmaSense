@@ -1,30 +1,25 @@
 # PharmaSense
 
-A capstone pharmacy management project covering inventory, point-of-sale workflows, analytics, and decision support.
+PharmaSense is a capstone project for a browser-based pharmacy management system designed to run on a local network. Its goal is to bring sales, inventory, analytics, and decision support into one application.
 
-**Status:** Repository tooling is ready; application development has not started. The proposed stack is React with Tailwind CSS, Node.js with Express, MySQL, and Python for specialized services. The application is intended to run on a local network.
+## Planned capabilities
 
-## Tooling setup
+- Point-of-sale processing and sales records.
+- Inventory management with batch tracking, expiry monitoring, and stock alerts.
+- Demand forecasting and business analytics.
+- A business chatbot for operational questions.
+- Employee attendance, role-based access, and audit logs.
 
-Install [Node.js 24 LTS](https://nodejs.org/) and Git, then run these commands from the repository root:
+**Development status:** The repository structure and development tools are in place. Application implementation has not started.
 
-```sh
-npm ci
-npm run lint
-npm run format:check
-```
+## Technology stack
 
-`npm ci` also installs a local commit-message hook. There are no application services to start yet.
-
-| Command                                                     | Purpose                                      |
-| ----------------------------------------------------------- | -------------------------------------------- |
-| `npm run lint`                                              | Check JavaScript and React code with ESLint. |
-| `npm run format`                                            | Apply Prettier formatting.                   |
-| `npm run format:check`                                      | Check formatting without changing files.     |
-| `npm run commitlint -- --edit <message-file>`               | Validate a commit-message file.              |
-| `npm run pr-title -- "fix(inventory): correct stock count"` | Validate a proposed PR title locally.        |
-
-Python linting and application tests will be added with the first relevant source code. The current checks verify repository tooling, not pharmacy functionality.
+| Area                 | Planned technologies   |
+| -------------------- | ---------------------- |
+| Frontend             | React and Tailwind CSS |
+| Backend              | Node.js and Express    |
+| Database             | MySQL                  |
+| Specialized services | Python                 |
 
 ## Project structure
 
@@ -36,47 +31,56 @@ backend/
   src/              Express API and business logic
 python/
   forecasting/      Demand forecasting service
-  chatbot/          Local business-chatbot service
+  chatbot/          Business-chatbot service
 database/
   migrations/       Versioned MySQL schema changes
   seeds/            Synthetic development/test records
-docs/               Setup and team documentation
-scripts/            Repository tooling, not application services
+docs/               Project and team documentation
+scripts/            Repository development tools
 ```
 
-These are starter folders, not runnable applications. Each area has a short README. Empty source folders use `.gitkeep` files so Git preserves them; remove those placeholders when actual files arrive. Add dependencies and application tests with the first implementation.
+See the directory guides for [frontend](frontend/README.md), [backend](backend/README.md), [Python services](python/README.md), and [database](database/README.md) responsibilities.
 
-## Collaboration
+Empty source folders contain `.gitkeep` placeholders so they are included in Git. Remove those placeholders when actual source files are added.
 
-Use short-lived branches and pull requests to `main`. Commit messages and PR titles follow:
+## Development setup
+
+Install [Node.js 24 LTS](https://nodejs.org/) and Git, then run these commands from the repository root:
+
+```sh
+npm ci
+npm run lint
+npm run format:check
+```
+
+`npm ci` installs development dependencies and the local commit-message hook. Application startup commands will be added with their implementations.
+
+| Command                                                     | Purpose                                      |
+| ----------------------------------------------------------- | -------------------------------------------- |
+| `npm run lint`                                              | Check JavaScript and React code with ESLint. |
+| `npm run format`                                            | Apply Prettier formatting.                   |
+| `npm run format:check`                                      | Check formatting without changing files.     |
+| `npm run commitlint -- --edit <message-file>`               | Validate a commit-message file.              |
+| `npm run pr-title -- "fix(inventory): correct stock count"` | Validate a proposed PR title locally.        |
+
+CI checks lint, formatting, and PR titles. Reviewdog annotates lint findings, and Dependabot proposes dependency updates. Application tests and Python checks will be added alongside the relevant source code.
+
+## Contributing
+
+Use a short-lived branch for each task and open a pull request to `main`. Request review from `@StevenTampos` and wait for approval before merging.
+
+Commit messages and PR titles use the affected module as their scope:
 
 ```text
-type(scope): short description
-
 feat(inventory): add batch expiry tracking
 fix(pos): correct change calculation
 docs(setup): explain local installation
 ```
 
-The scope describes the affected module, not the author. See [CONTRIBUTING.md](CONTRIBUTING.md) for the workflow and approval policy.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the contribution workflow.
 
-## Checks and review tools
+## Data handling
 
-- **ESLint and Prettier:** code rules and consistent formatting.
-- **Reviewdog:** lint annotations on changed PR lines. This is static review, not AI business-logic review.
-- **Dependabot:** weekly, grouped dependency-update PRs. Updates still need human review; nothing merges automatically.
-- **commitlint:** consistent local commit messages and PR titles.
+Do not commit credentials, real pharmacy records, employee photos, biometric templates, or database backups. Use synthetic data for development and tests.
 
-The workflows are published on GitHub. Standard GitHub-hosted Actions runners are free for public repositories; larger runners and some storage usage have separate limits or charges. No paid or external AI review service is configured.
-
-## Approval protection
-
-The repository is public, so GitHub Free supports protected branches and branch rulesets. The intended reviewer is `@StevenTampos`. **Protection must be configured and activated before approval and passing checks become merge requirements.** The last verified state had no active rulesets and an unprotected `main`; until protection is enabled, review remains a team policy rather than a merge lock.
-
-[Repository settings](docs/repository-settings.md) explains the `main` protection setup and the owner's exception for their own PRs. Adding these files does not change remote settings.
-
-## Keep local material out of Git
-
-`Capstone_Paper_G17.pdf` is a local reference and is explicitly ignored. Do not commit research records, real pharmacy data, database backups, face images, biometric templates, credentials, or model weights. Use synthetic test fixtures instead.
-
-Keep private data in `local-data/`, weights in `model-weights/`, and database backups in `backups/`; these directories are ignored. Schema and migration source files may be committed. Safe `.env.example` files may be committed, but actual `.env` files must remain local.
+Keep local datasets in `local-data/`, model weights in `model-weights/`, and backups in `backups/`. These directories and actual `.env` files are ignored. Schema migrations and `.env.example` files containing placeholders belong in Git.

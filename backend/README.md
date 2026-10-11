@@ -1,9 +1,19 @@
 # Backend
 
-Node.js and Express API code lives in `src/`.
+The backend contains the Node.js and Express API for PharmaSense. It handles application operations, business rules, access control, and communication with MySQL and the Python services.
 
-Start simple. Add folders such as `routes/`, `services/`, and `middleware/` when the code needs them rather than creating a folder for every possible layer now.
+## Responsibilities
 
-The backend owns authentication, access control, business rules, and database access. The frontend calls this API; Python services communicate through internal APIs. Keep credentials in local environment files, not source code.
+- Authenticate users and enforce role-based permissions.
+- Validate requests and process sales and inventory operations.
+- Read and update database records consistently.
+- Coordinate forecasting and chatbot requests through internal service APIs.
+- Record application audit events.
 
-This is a folder scaffold, not a running API. Add the backend's package manifest, entry point, and relevant tests with the first implementation. The root ESLint configuration already supports Node.js code in `backend/`.
+## Directory layout
+
+Application source belongs in `src/`. As the API grows, use `routes/` for endpoints, `services/` for business logic, and `middleware/` for shared request handling.
+
+Keep credentials in local environment files. Database schema changes belong in the repository's `database/migrations/` directory, not ad hoc production edits.
+
+The root ESLint configuration supports Node.js code in `backend/`. The API entry point and runtime setup have not been implemented yet.
