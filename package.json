@@ -1,0 +1,32 @@
+{
+  "name": "pharmasense",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Repository tooling for the PharmaSense capstone project",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "lint": "eslint . --max-warnings=0",
+    "lint:report": "eslint . --max-warnings=0 --format rdjson",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "commitlint": "commitlint",
+    "pr-title": "node scripts/check-pr-title.mjs"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
+    "@commitlint/lint": "^21.2.3",
+    "@commitlint/load": "^21.2.3",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.12.0",
+    "eslint-formatter-rdjson": "^1.0.6",
+    "eslint-plugin-react-jsx": "^5.26.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.9.10"
+  }
+}

@@ -1,0 +1,35 @@
+# Local research reference
+/Capstone_Paper_G17.pdf
+/Capstone_Paper_G17.docx
+
+# JavaScript dependencies and generated files
+node_modules/
+dist/
+build/
+coverage/
+.npm/
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Secrets; only placeholder examples belong in Git
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Private records, database backups, and model weights
+local-data/
+model-weights/
+backups/
+
+# Logs and operating-system files
+*.log
+.DS_Store
+Thumbs.db
+Desktop.ini
