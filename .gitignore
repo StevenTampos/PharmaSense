@@ -1,3 +1,6 @@
+# Local assistant settings and worktrees
+/.claude/
+
 # Local research reference
 /Capstone_Paper_G17.pdf
 /Capstone_Paper_G17.docx
