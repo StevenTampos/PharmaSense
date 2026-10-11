@@ -6,6 +6,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 export default [
   {
     ignores: [
+      ".claude/**",
       "**/node_modules/**",
       "**/dist/**",
       "**/build/**",

@@ -51,9 +51,9 @@ Keep PRs small enough to review. Reviewdog annotates lint findings; it does not 
 
 ## Approval policy and its limits
 
-**Current plan: private GitHub Free.** Required approvals, protected branches, and merge-blocking status checks are unavailable. The preceding workflow is a team agreement; failing checks and missing approval do not technically prevent merging. A `CODEOWNERS` file does not enforce review by itself.
+**Current visibility: public on GitHub Free.** Protected branches and branch rulesets are available, but they must be configured and activated. Until that is done, the preceding workflow remains a team agreement: failing checks and missing approval do not technically prevent merging. A `CODEOWNERS` file does not enforce review by itself.
 
-If an eligible plan becomes available, require code-owner approval on `main` with `@StevenTampos` as the sole code owner. Teammates may still submit reviews, but their approvals will not satisfy that owner's required approval. An authorized collaborator may merge after approval; this is not a restriction on who can click Merge.
+Require code-owner approval on `main` with `@StevenTampos` as the sole code owner when enabling protection. Teammates may still submit reviews, but their approvals will not satisfy that owner's required approval. An authorized collaborator may merge after approval; this is not a restriction on who can click Merge.
 
 GitHub does not allow PR authors to approve their own PRs. For owner-authored PRs, the agreed exception is a manual owner bypass **only after checks pass**. That bypass can technically override other protections too; it must not be used to skip checks on teammates' changes. Details are in [repository settings](docs/repository-settings.md).
 
@@ -70,6 +70,8 @@ Prefer squash merging and delete the task branch after merging. Do not push dire
 
 ## Add tooling as the application grows
 
-Create `frontend/`, `backend/`, Python services, and database directories when real code exists. ESLint already separates frontend browser globals from backend and tooling Node.js globals. Update it if a different structure or language is chosen.
+The starter layout is `frontend/` for React, `backend/` for Express, `python/` for specialized services, and `database/` for migrations and synthetic seeds. Add source inside the existing folders; remove `.gitkeep` placeholders as real files arrive. ESLint already separates frontend browser globals from backend and tooling Node.js globals. Update it if a different structure or language is chosen.
+
+The repository is public: anyone can read, clone, download, or fork it. Public forks cannot be disabled. Only invited collaborators have write access to this repository; an outsider's fork or PR does not give them permission to push or merge here.
 
 Add Ruff lint/format checks with the first Python service and meaningful tests with the first application modules. Add Dependabot entries for new manifests when those manifests exist. Do not introduce empty test jobs or deployment automation just to make the repository appear complete.

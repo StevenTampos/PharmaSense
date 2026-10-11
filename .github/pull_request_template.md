@@ -22,4 +22,4 @@
 - [ ] No secrets, real pharmacy data, biometric records, or reference paper are included.
 - [ ] Review has been requested from `@StevenTampos`.
 
-<!-- Wait for owner approval before merging. On private GitHub Free this is a team policy, not an enforced merge lock. -->
+<!-- Wait for owner approval before merging. GitHub enforces this only when the main branch protection or ruleset is active. -->

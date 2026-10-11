@@ -26,6 +26,26 @@ npm run format:check
 
 Python linting and application tests will be added with the first relevant source code. The current checks verify repository tooling, not pharmacy functionality.
 
+## Project structure
+
+```text
+frontend/
+  src/              React application code
+  public/           Public static assets
+backend/
+  src/              Express API and business logic
+python/
+  forecasting/      Demand forecasting service
+  chatbot/          Local business-chatbot service
+database/
+  migrations/       Versioned MySQL schema changes
+  seeds/            Synthetic development/test records
+docs/               Setup and team documentation
+scripts/            Repository tooling, not application services
+```
+
+These are starter folders, not runnable applications. Each area has a short README. Empty source folders use `.gitkeep` files so Git preserves them; remove those placeholders when actual files arrive. Add dependencies and application tests with the first implementation.
+
 ## Collaboration
 
 Use short-lived branches and pull requests to `main`. Commit messages and PR titles follow:
@@ -47,13 +67,13 @@ The scope describes the affected module, not the author. See [CONTRIBUTING.md](C
 - **Dependabot:** weekly, grouped dependency-update PRs. Updates still need human review; nothing merges automatically.
 - **commitlint:** consistent local commit messages and PR titles.
 
-Workflows and dependency updates take effect after these files are published to GitHub. Private GitHub Actions usage is subject to the account's included allowance and settings; no paid review service is configured.
+The workflows are published on GitHub. Standard GitHub-hosted Actions runners are free for public repositories; larger runners and some storage usage have separate limits or charges. No paid or external AI review service is configured.
 
-## Approval limitation
+## Approval protection
 
-The intended reviewer is `@StevenTampos`. **Private repositories on GitHub Free cannot enforce protected-branch approvals or required checks.** Until an eligible plan is available, requesting that review and waiting for passing checks is a team policy, not a merge lock.
+The repository is public, so GitHub Free supports protected branches and branch rulesets. The intended reviewer is `@StevenTampos`. **Protection must be configured and activated before approval and passing checks become merge requirements.** The last verified state had no active rulesets and an unprotected `main`; until protection is enabled, review remains a team policy rather than a merge lock.
 
-[Repository settings](docs/repository-settings.md) explains the optional GitHub Pro/Student Pro protection setup and the owner's exception for their own PRs. No remote settings have been changed by adding these files.
+[Repository settings](docs/repository-settings.md) explains the `main` protection setup and the owner's exception for their own PRs. Adding these files does not change remote settings.
 
 ## Keep local material out of Git
 
