@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import globals from "globals";
 import reactJsx from "eslint-plugin-react-jsx";
 import reactHooks from "eslint-plugin-react-hooks";
+import tseslint from "typescript-eslint";
 
 export default [
   {
@@ -27,6 +28,32 @@ export default [
   },
   {
     files: ["*.{js,mjs,cjs}", "scripts/**/*.{js,mjs,cjs}", "backend/**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
+    files: ["**/*.{ts,tsx}"],
+  })),
+  {
+    files: ["frontend/**/*.{ts,tsx}"],
+    languageOptions: {
+      globals: globals.browser,
+    },
+    plugins: {
+      "react-jsx": reactJsx,
+      "react-hooks": reactHooks,
+    },
+    rules: {
+      ...reactJsx.configs.recommended.rules,
+      "react-hooks/rules-of-hooks": "error",
+      "react-hooks/exhaustive-deps": "error",
+      "@typescript-eslint/no-explicit-any": "error",
+    },
+  },
+  {
+    files: ["*.config.ts"],
     languageOptions: {
       globals: globals.node,
     },
