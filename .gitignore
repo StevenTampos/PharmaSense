@@ -8,9 +8,14 @@
 # JavaScript dependencies and generated files
 node_modules/
 dist/
+dist-ssr/
 build/
 coverage/
 .npm/
+.vite/
+vite.config.ts.timestamp-*
+*.tsbuildinfo
+.eslintcache
 
 # Python environments and caches
 .venv/
@@ -19,17 +24,32 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.ipynb_checkpoints/
 
 # Secrets; only placeholder examples belong in Git
 .env
 .env.*
 !.env.example
 !.env.*.example
+*.pem
+*.key
 
 # Private records, database backups, and model weights
 local-data/
 model-weights/
 backups/
+*.gguf
+*.safetensors
+
+# Editor files (share only the recommended-extensions list)
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
 
 # Logs and operating-system files
 *.log
