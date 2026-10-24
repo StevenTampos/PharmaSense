@@ -26,9 +26,9 @@ begins. Keep service dependencies with the corresponding service.
 
 ## Current status
 
-Python service implementations, `requirements.txt` files, tests, and Python lint/format
-configuration do not exist yet. No Python virtual environment, environment example, or runnable
-service commands are provided by this repository.
+Python service implementations, `requirements.txt` files, and tests do not exist yet. Ruff is
+configured at the repository root in `pyproject.toml` and verified in CI. No Python virtual
+environment, environment example, or runnable service commands are provided by this repository.
 
 ## Planned (not yet available): Python setup
 
@@ -49,17 +49,33 @@ must not be hard-coded in source files.
 
 The chatbot may need an `OLLAMA_ENDPOINT` setting; the final environment contract is not defined.
 
-## Planned (not yet available): Ruff configuration
+## Ruff configuration
 
-Ruff is the planned Python linter and formatter. Its configuration file does not exist yet; add it
-to `python/pyproject.toml` with the first Python service:
+Ruff is configured for Python linting and formatting in `pyproject.toml` at the repository root:
 
 ```toml
 [tool.ruff]
+target-version = "py311"
 line-length = 100
+src = ["python"]
+
+exclude = [
+  ".claude",
+  ".git",
+  ".venv",
+  "venv",
+  "node_modules",
+  "dist",
+  "build",
+  "local-data",
+  "model-weights",
+  "backups",
+]
 
 [tool.ruff.format]
 quote-style = "single"
+indent-style = "space"
+line-ending = "lf"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "D", "T20", "ERA"]
@@ -72,8 +88,7 @@ The selected rule groups cover E/W (pycodestyle), F (pyflakes), I (import order)
 naming), D (docstrings), T20 (leftover `print` statements), and ERA (commented-out code). Ruff's
 formatter enforces the single-quote preference directly.
 
-Once Ruff is installed and the configuration is added, install it with `pip install ruff` and run
-these commands from the repository root:
+Install Ruff with `pip install ruff` and run these commands from the repository root:
 
 | Command                 | Purpose                                  |
 | ----------------------- | ---------------------------------------- |
@@ -82,8 +97,7 @@ these commands from the repository root:
 | `ruff format --check .` | Check formatting without changing files. |
 | `ruff format .`         | Apply formatting.                        |
 
-`pytest` remains planned for service tests. Add it and the Ruff configuration when the first
-service is implemented.
+`pytest` remains planned for service tests once services are implemented.
 
 Tests should use synthetic data only. Never use real sales records or real face images. Prioritize
 forecast calculations, recognition confidence thresholds, and response shapes the backend depends
@@ -91,8 +105,7 @@ on.
 
 ## Coding conventions
 
-These conventions will be enforced by Ruff once its configuration is added. Until then, follow
-them and check them in review:
+These conventions are enforced by Ruff (configured in `pyproject.toml` and checked in CI):
 
 - Modules, files, functions, and variables use `snake_case`; classes use `UpperCamelCase`; constants
   use `UPPER_SNAKE_CASE`.

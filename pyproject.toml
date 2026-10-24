@@ -1,0 +1,28 @@
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["python"]
+
+exclude = [
+  ".claude",
+  ".git",
+  ".venv",
+  "venv",
+  "node_modules",
+  "dist",
+  "build",
+  "local-data",
+  "model-weights",
+  "backups",
+]
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "D", "T20", "ERA"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
