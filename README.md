@@ -129,11 +129,9 @@ Follow the workflow in [CONTRIBUTING.md](CONTRIBUTING.md). Repository-owner sett
 protection are documented in [docs/repository-settings.md](docs/repository-settings.md).
 
 The configured Prettier formatter uses double quotes for TypeScript. Naming conventions are guidance
-for manual review, not ESLint-enforced rules. Python uses single quotes as a style convention;
-Python rules will be enforced by Ruff once its configuration is added, and until then are followed
-and checked in review. CI does not run Ruff yet; adding Ruff is planned together with the first
-Python service. See the [Python guide](python/README.md) for the planned Ruff configuration and
-commands.
+for manual review, not ESLint-enforced rules. Python uses single quotes as a style convention,
+enforced by Ruff. Ruff configuration lives in `pyproject.toml` and is verified in CI. See the
+[Python guide](python/README.md) for Ruff commands and rules.
 
 For a TypeScript union instead of an enum, use:
 
