@@ -4,6 +4,9 @@
 
 Keep `main` stable. Create a short-lived branch for one focused change:
 
+Use the format `<type>/<short-description>`: all lowercase with words separated by hyphens, using
+one of the types listed in the table below.
+
 ```sh
 git switch main
 git pull --ff-only
@@ -20,7 +23,21 @@ Use this format for both:
 type(scope): short description
 ```
 
-Allowed types are `build`, `chore`, `ci`, `docs`, `feat`, `fix`, `perf`, `refactor`, `revert`, `style`, and `test`. Use a lowercase scope describing the affected area, such as `inventory`, `pos`, `auth`, `analytics`, `chatbot`, `attendance`, `db`, `setup`, or `repo`. These are examples, not a fixed list.
+| Type       | Description                                                   |
+| ---------- | ------------------------------------------------------------- |
+| `feat`     | A new feature                                                 |
+| `fix`      | A bug fix                                                     |
+| `docs`     | Documentation changes only                                    |
+| `style`    | Formatting changes that do not affect behavior                |
+| `refactor` | Code changes that neither fix a bug nor add a feature         |
+| `perf`     | Performance improvements                                      |
+| `test`     | Adding or updating tests                                      |
+| `build`    | Build system or dependency changes                            |
+| `ci`       | Continuous integration and workflow changes                   |
+| `chore`    | Maintenance and tooling that does not change application code |
+| `revert`   | Reverting a previous commit                                   |
+
+Use a lowercase scope describing the affected area, such as `inventory`, `pos`, `auth`, `analytics`, `chatbot`, `attendance`, `db`, `setup`, or `repo`. These are examples, not a fixed list.
 
 ```text
 feat(inventory): add batch expiry tracking
@@ -39,9 +56,94 @@ npm run pr-title -- "fix(inventory): correct stock count"
 
 Local hooks can be bypassed and are not a security boundary. The separate GitHub title check reports whether the PR title follows the same rules. When merging, use the valid PR title as the squash commit title.
 
+## Step-by-step: from pull to merge
+
+1. **Update `main`.**
+
+   ```sh
+   git switch main
+   git pull --ff-only
+   ```
+
+2. **Create a branch.**
+
+   ```sh
+   git switch -c <type>/<short-description>
+   ```
+
+3. **Do the work.** Commit small and often, with one logical change per commit.
+
+4. **Check the changes.**
+
+   ```sh
+   git status
+   git diff
+   ```
+
+5. **Run the checks.**
+
+   ```sh
+   npm run lint
+   npm run format:check
+   npm run typecheck
+   ```
+
+   If formatting fails, run `npm run format` and check again.
+
+6. **Stage specific files and commit.**
+
+   ```sh
+   git add <file-1> <file-2>
+   git commit -m "type(scope): short description"
+   ```
+
+   Prefer naming the files you intend to stage over `git add .`.
+
+7. **Sync with `main`.**
+
+   ```sh
+   git fetch origin
+   git rebase origin/main
+   ```
+
+   If there are conflicts, edit the affected files, stage the resolved files with `git add <file>`,
+   then continue:
+
+   ```sh
+   git rebase --continue
+   ```
+
+   To cancel the rebase:
+
+   ```sh
+   git rebase --abort
+   ```
+
+8. **Push the branch.**
+
+   ```sh
+   git push -u origin <branch>
+   ```
+
+   Use `git push --force-with-lease` only after rebasing a branch that was already pushed. Never use
+   plain `--force`, and never force-push `main`.
+
+9. **Open a pull request** to `main` using the
+   [PR template](.github/pull_request_template.md). Use a `type(scope): short description` title
+   and request review from `@StevenTampos`.
+
+10. **After the squash merge, update `main` and delete the task branch.**
+
+    ```sh
+    git switch main
+    git pull --ff-only
+    git branch -d <branch>
+    ```
+
 ## Before requesting review
 
-1. Run `npm run lint` and `npm run format:check`. Apply `npm run format` when needed.
+1. Run `npm run lint`, `npm run format:check`, `npm run typecheck`, and `npm run build`. Apply
+   `npm run format` when formatting fails.
 2. Run relevant application tests once those tests exist. Until then, describe what was manually checked; do not claim unimplemented tests passed.
 3. Open a PR to `main` using the template. Explain the change, link its task, and include UI screenshots if relevant.
 4. Request review from `@StevenTampos` and resolve review discussions.
