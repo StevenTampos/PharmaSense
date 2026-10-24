@@ -2,7 +2,9 @@
 
 The frontend contains the browser interface for PharmaSense, built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. It is responsible for screens, reusable UI components, user interactions, and calls to the backend API.
 
-> This guide covers frontend setup, commands, and standards. Git workflow, branch protection, and team rules are in the [root README](../README.md).
+> This guide covers frontend setup, commands, and standards. See [CONTRIBUTING.md](../CONTRIBUTING.md)
+> for contribution and review workflow. Repository-owner settings are documented in
+> [docs/repository-settings.md](../docs/repository-settings.md).
 
 ## Directory layout
 
@@ -41,14 +43,14 @@ Files at the **repository root** that belong to the frontend build:
 Done:
 
 - React + TypeScript + Vite project setup with the default template screen, restyled with Tailwind CSS.
-- `@` import alias, strict TypeScript, and ESLint and Prettier rules for `.ts` and `.tsx` files.
+- `@` import alias, strict TypeScript, and ESLint and Prettier tooling for `.ts` and `.tsx` files.
 
 Not done yet:
 
 - Routing, page layout, and the real PharmaSense screens (POS, Inventory, Analytics, Chatbot, Attendance, Accounts).
 - The API client code for the backend, and shared API types.
 - Test tooling (Vitest and React Testing Library) and the first tests.
-- `frontend/.env.example`.
+- A frontend environment example file. There is no `frontend/.env.example` yet.
 
 ## Setup
 
@@ -151,21 +153,17 @@ Run these from the repository root.
 
 Run `npm run lint`, `npm run format:check`, and `npm run typecheck` before every commit.
 
-## Environment setup
+## Planned (not yet available): Environment setup
 
-Copy the example file and fill in the values:
-
-```sh
-cp frontend/.env.example frontend/.env
-```
-
-Vite is configured with `envDir: "frontend"`, so it reads `frontend/.env`.
+There is no `frontend/.env.example` yet. Do not try to copy one. Vite is configured with
+`envDir: "frontend"` and will read `frontend/.env` when environment configuration is added.
 
 | Variable            | Description                  |
 | ------------------- | ---------------------------- |
 | `VITE_API_BASE_URL` | Base URL of the backend API. |
 
-Only variables prefixed with `VITE_` are exposed to the browser. **Never put a secret in one.** Real `.env` files are never committed; only `.env.example` with placeholders is.
+Only variables prefixed with `VITE_` are exposed to the browser. **Never put a secret in one.**
+Real `.env` files must stay out of Git; a future example file should contain placeholders only.
 
 ## Testing
 
@@ -181,28 +179,31 @@ Only variables prefixed with `VITE_` are exposed to the browser. **Never put a s
 
 ## Coding standards
 
-ESLint and Prettier enforce these rules automatically, so run them before every commit.
+ESLint and Prettier are configured for code linting and formatting. Naming conventions below are
+team guidance for manual review; they are not automatically enforced.
 
 ### Naming conventions
 
-| Item                                     | Convention                                  | Example                                           |
-| ---------------------------------------- | ------------------------------------------- | ------------------------------------------------- |
-| Component and component file             | UpperCamelCase, `.tsx`                      | `InventoryTable.tsx`, `ChatbotWidget.tsx`         |
-| Custom hook                              | `use` + lowerCamelCase                      | `useLowStockAlerts`, `useForecastData`            |
-| Function / method                        | lowerCamelCase, verb or verb phrase         | `calculateDiscount`, `fetchSalesHistory`          |
-| Variable / parameter                     | lowerCamelCase                              | `currentBatch`, `reorderLevel`                    |
-| Constant (fixed config or enum-like)     | UPPER_SNAKE_CASE                            | `VAT_RATE`, `MAX_LOGIN_ATTEMPTS`                  |
-| Boolean variable / prop                  | prefix `is`, `has`, or `can`                | `isNearExpiry`, `hasDiscount`, `canOverrideStock` |
-| Interface / type alias                   | UpperCamelCase, no `I` prefix               | `StockBatch`, `ProductFormValues`                 |
-| Props type                               | Component name + `Props`                    | `InventoryTableProps`                             |
-| Enum                                     | UpperCamelCase name, UpperCamelCase members | `UserRole.Admin`                                  |
-| Non-component file (utils, hooks, types) | lowerCamelCase                              | `formatCurrency.ts`, `useForecastData.ts`         |
-| Custom CSS class (on top of Tailwind)    | kebab-case                                  | `pos-summary-card`                                |
+| Item                                     | Convention                          | Example                                           |
+| ---------------------------------------- | ----------------------------------- | ------------------------------------------------- |
+| Component and component file             | UpperCamelCase, `.tsx`              | `InventoryTable.tsx`, `ChatbotWidget.tsx`         |
+| Custom hook                              | `use` + lowerCamelCase              | `useLowStockAlerts`, `useForecastData`            |
+| Function / method                        | lowerCamelCase, verb or verb phrase | `calculateDiscount`, `fetchSalesHistory`          |
+| Variable / parameter                     | lowerCamelCase                      | `currentBatch`, `reorderLevel`                    |
+| Constant (fixed config or enum-like)     | UPPER_SNAKE_CASE                    | `VAT_RATE`, `MAX_LOGIN_ATTEMPTS`                  |
+| Boolean variable / prop                  | prefix `is`, `has`, or `can`        | `isNearExpiry`, `hasDiscount`, `canOverrideStock` |
+| Interface / type alias                   | UpperCamelCase, no `I` prefix       | `StockBatch`, `ProductFormValues`                 |
+| Props type                               | Component name + `Props`            | `InventoryTableProps`                             |
+| Role type                                | String union or `as const` object   | `type UserRole = "admin" \| "pharmacist";`        |
+| Non-component file (utils, hooks, types) | lowerCamelCase                      | `formatCurrency.ts`, `useForecastData.ts`         |
+| Custom CSS class (on top of Tailwind)    | kebab-case                          | `pos-summary-card`                                |
 
 - React-defined constants and hook return values keep lowerCamelCase.
 - Avoid names that differ only in case or by one character (do not use both `stock` and `Stock` in the same scope).
 - Use descriptive names. Avoid vague ones such as `data`, `temp`, or `handleStuff`.
 - Event handlers are named `handle<Event>` and the props that receive them `on<Event>` (for example `handleSubmit` passed as `onSubmit`).
+- Prefer string unions or `as const` objects instead of TypeScript `enum`, which is not allowed by
+  the app's `erasableSyntaxOnly` compiler option.
 
 ### TypeScript usage rules
 
@@ -219,7 +220,8 @@ ESLint and Prettier enforce these rules automatically, so run them before every 
 - **Indentation:** 2 spaces.
 - **Semicolons:** required.
 - **Line length:** 100 characters maximum. Wrap long expressions and JSX attributes.
-- **Quotes:** single quotes for strings (double quotes for JSX attribute values) per the team standard. Prettier currently uses its default double quotes unless `"singleQuote": true` is added to `.prettierrc.json`, so let `npm run format` decide.
+- **Quotes:** use double quotes for TypeScript strings, matching the current Prettier configuration.
+  JSX attribute values also use double quotes.
 - **Blank lines:** one blank line between functions and components.
 - **Braces:** always use braces with `if`, `else`, `for`, `do`, and `while`, even for one-line bodies. Use K&R style (opening brace on the same line, closing brace on its own line).
 - **One statement per line.**
@@ -256,12 +258,13 @@ export function calculateDiscount(price: number, discountRate: number): number {
 
 - Use **functional components with hooks** (`useState`, `useEffect`, custom hooks). Do not write class components.
 - Use `async` / `await` with `try` / `catch` for API calls. Unhandled promise rejections are not allowed.
-- Every API response uses the same JSON shape (see below) so success and error cases are handled the same way everywhere.
+- Responses with a body use the same JSON shape (see below) so success and error cases are handled
+  consistently. HTTP `204` has no body; clients and tests must handle it without parsing JSON.
 - Align names, values, and trailing comments within a block where it improves readability.
 
 ## API responses and error handling
 
-The backend returns this shape from every endpoint:
+The planned API envelope for responses with a body is:
 
 ```ts
 interface ApiResponse<T> {
@@ -274,6 +277,7 @@ interface ApiResponse<T> {
 - Every API call has `try` / `catch` and handles loading (`isLoading`), success, and error states.
 - Show the user a clear message from `message`. Never show raw error objects.
 - Handle `401` (not logged in or token expired) by sending the user to the login screen, and `403` (wrong role) with a clear "not allowed" message.
+- Handle `204` responses without trying to parse a body.
 - Use a React error boundary around major pages so one crash does not blank the whole app.
 - Do not use `console.log` for debugging in committed code. Never log tokens, passwords, or personal data.
 
@@ -286,22 +290,13 @@ interface ApiResponse<T> {
 - **Sensitive data:** employee photos, face images, and templates never belong in the frontend source or `public/`.
 - **Dependencies:** review Dependabot PRs and avoid unmaintained packages.
 
-## API documentation
+## API documentation (planned)
 
-Endpoints are documented in the **Postman** collection at `docs/api/pharmasense.postman_collection.json` in the repository root. Import it together with `docs/api/pharmasense.postman_environment.json` and select the **PharmaSense Local** environment.
-
-| Variable  | Example                 | Description                         |
-| --------- | ----------------------- | ----------------------------------- |
-| `baseUrl` | `http://localhost:3000` | Where the backend is running.       |
-| `token`   | (set by login request)  | JWT used by authenticated requests. |
-
-Use the collection to check request and response shapes before writing frontend API code. The full rules for maintaining it are in the [root README](../README.md#api-documentation).
+When endpoints exist, document them with a Postman collection and an environment template containing
+placeholders only. Neither file exists yet, and there is no implemented login endpoint or
+token-saving request. Use the collection to check request and response shapes once it is created.
 
 ## Contributing
 
-Follow the Git workflow, branch naming, commit convention, and PR template in the [root README](../README.md#git-workflow). Quick reference:
-
-- **Branch:** `<type>/<short-description>`, for example `feat/inventory-batches`.
-- **Commit and PR title:** `type(scope): short description`, in the imperative mood, with no final period and at most 100 characters. Example: `feat(pos): add receipt preview`.
-- **Never commit:** commented-out code, debug `console.log` / `print` statements, test credentials, `.env` files, or real pharmacy, employee, or biometric data.
-- **Review:** non-trivial changes go through a pull request reviewed by another team member before merging into `main`.
+Follow the contribution and review workflow in [CONTRIBUTING.md](../CONTRIBUTING.md). Repository
+settings are documented in [docs/repository-settings.md](../docs/repository-settings.md).

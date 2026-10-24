@@ -1,8 +1,12 @@
 # Database
 
-This directory contains the version-controlled MySQL schema and synthetic seed data for PharmaSense. It describes how the application database is created and changed, not the contents of a live pharmacy database.
+This directory is reserved for the planned version-controlled MySQL schema and synthetic seed data
+for PharmaSense. The executable database implementation is not available yet.
 
-> This guide covers database setup and standards. Git workflow, branch protection, and team rules are in the [root README](../README.md). How the API uses the database is in the [backend guide](../backend/README.md).
+> This guide covers database plans and standards. See [CONTRIBUTING.md](../CONTRIBUTING.md) for
+> contribution and review workflow. Repository-owner settings are documented in
+> [docs/repository-settings.md](../docs/repository-settings.md). How the API uses the database is in
+> the [backend guide](../backend/README.md).
 
 ## Directory layout
 
@@ -27,9 +31,12 @@ Not done yet:
 - Executable migrations, seed scripts, and the `npm run migrate` and `npm run seed` commands.
 - The actual table design (an ERD or schema document in `docs/`).
 
-## Local setup
+## Planned (not yet available): Local database setup
 
-Install **MySQL 8**, then create an empty database and a dedicated user. Do not use `root` for the application.
+The following database provisioning steps describe a future setup; do not treat them as a working
+application setup yet. No backend database connection, migrations, or seed scripts are implemented.
+When they are available, install **MySQL 8**, create an empty database and a dedicated user, and do
+not use `root` for the application.
 
 ```sql
 CREATE DATABASE pharmasense CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -37,7 +44,8 @@ CREATE USER 'pharmasense_user'@'localhost' IDENTIFIED BY '<choose-a-strong-passw
 GRANT ALL PRIVILEGES ON pharmasense.* TO 'pharmasense_user'@'localhost';
 ```
 
-Put the connection details in `backend/.env` (copied from `backend/.env.example`). Real `.env` files are never committed.
+Store connection details in a local `backend/.env` when environment configuration is implemented.
+There is no `backend/.env.example` yet. Real `.env` files must never be committed.
 
 | Variable      | Description                  |
 | ------------- | ---------------------------- |
@@ -47,14 +55,14 @@ Put the connection details in `backend/.env` (copied from `backend/.env.example`
 | `DB_USER`     | Database user.               |
 | `DB_PASSWORD` | Database password.           |
 
-Once the commands exist, set up a fresh database from the repository root:
+These proposed commands do not exist yet and are not runnable:
 
 ```sh
 npm run migrate
 npm run seed
 ```
 
-## Run commands
+## Planned (not yet available): Run commands
 
 > These script names are proposals. They are added to `package.json` when the matching code exists.
 
@@ -63,7 +71,7 @@ npm run seed
 | `npm run migrate` | Apply pending migrations in order.                | Planned |
 | `npm run seed`    | Load synthetic seed data into the development DB. | Planned |
 
-## Migrations
+## Planned conventions: Migrations
 
 A migration is a numbered file that changes the schema in one small, ordered step.
 
@@ -76,7 +84,7 @@ A migration is a numbered file that changes the schema in one small, ordered ste
 - Commit the migration in the same pull request as the backend code that depends on it.
 - A PR that changes the schema should say so in its summary, so reviewers check the migration carefully.
 
-## Seeds
+## Planned conventions: Seeds
 
 - Seed files contain **synthetic data only**: invented products, batches, employees, and sales. Never copy real pharmacy data, even partially.
 - Seeds must be safe to run on a fresh development or test database and should not assume specific auto-increment IDs.
@@ -84,7 +92,7 @@ A migration is a numbered file that changes the schema in one small, ordered ste
 - Seed data never contains real passwords. Use clearly fake credentials and document them as development-only.
 - Do not seed face images or biometric templates.
 
-## Coding standards
+## Planned conventions: Coding standards
 
 These conventions keep migrations and queries consistent and easy to review.
 
@@ -143,7 +151,7 @@ CREATE TABLE stock_batches (
 - All queries from the backend use **parameterized queries**. Never build SQL by string concatenation.
 - Production changes go through migrations, never ad hoc edits.
 
-## Testing
+## Planned conventions: Testing
 
 - Run tests against a **separate test database**, never the development or production one.
 - Check that all migrations apply cleanly to an empty database from the first file to the last.
@@ -151,9 +159,5 @@ CREATE TABLE stock_batches (
 
 ## Contributing
 
-Follow the Git workflow, branch naming, commit convention, and PR template in the [root README](../README.md#git-workflow). Quick reference:
-
-- **Branch:** `<type>/<short-description>`, for example `feat/inventory-batches`.
-- **Commit and PR title:** `type(scope): short description`, in the imperative mood, with no final period and at most 100 characters. Use the `db` scope or the feature area. Example: `feat(db): add stock_batches migration`.
-- **Never commit:** commented-out code, debug `console.log` / `print` statements, test credentials, `.env` files, or real pharmacy, employee, or biometric data.
-- **Review:** non-trivial changes go through a pull request reviewed by another team member before merging into `main`.
+Follow the contribution and review workflow in [CONTRIBUTING.md](../CONTRIBUTING.md). Repository
+settings are documented in [docs/repository-settings.md](../docs/repository-settings.md).
