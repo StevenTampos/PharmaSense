@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import AccountManagementPage from "@/pages/AccountManagementPage";
 import AdminDashboardPage from "@/pages/AdminDashboardPage";
 import LoginPage from "@/pages/LoginPage";
 import { ROUTES } from "@/lib/routes";
@@ -18,6 +19,14 @@ function App(): React.JSX.Element {
         element={
           <ProtectedRoute requiredRole="administrator">
             <AdminDashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.adminAccounts}
+        element={
+          <ProtectedRoute requiredRole="administrator">
+            <AccountManagementPage />
           </ProtectedRoute>
         }
       />

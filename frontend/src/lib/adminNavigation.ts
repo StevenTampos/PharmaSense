@@ -26,6 +26,6 @@ export const ADMIN_NAVIGATION: readonly AdminNavigationItem[] = [
   { label: "Expenses and Cheque Tracker", isAvailable: false },
   { label: "AI Chatbot", isAvailable: false },
   { label: "Attendance", isAvailable: false },
-  { label: "Account Management", isAvailable: false },
+  { label: "Account Management", path: ROUTES.adminAccounts, isAvailable: true },
   { label: "Audit Logs", isAvailable: false },
 ];
