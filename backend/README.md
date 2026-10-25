@@ -31,32 +31,45 @@ Only `src/` exists so far. Create additional folders with the code that needs th
 
 ## Current status
 
-The backend API, Express runtime, dependencies, tests, and backend `tsconfig.json` are not
-implemented. The root TypeScript project references only `tsconfig.app.json` and
-`tsconfig.node.json`; its `typecheck` command currently covers the frontend and Vite config, not
-backend code.
+Done for Sprint 1:
+
+- Express application and server runtime in TypeScript (`src/app.ts`, `src/server.ts`).
+- Authentication endpoints (`POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/me`).
+- Account management endpoints (`GET /api/users`, `POST /api/users`, `PATCH /api/users/:id/status`).
+- Audit logging service and endpoints (`GET /api/audit-logs`).
+- Role-based access control middleware (`Administrator`, `Cashier/Pharmacist`, `Inventory Manager`).
+- MySQL 8 connection pool integration (`src/config/database.ts`).
+- Environment variable configuration with `backend/.env.example`.
+- Strict mode TypeScript configuration (`tsconfig.backend.json`) checked by root `npm run typecheck`.
+- Automated test suite with Vitest (`npm run test:backend`).
+
+Planned for future sprints:
+
+- Sprint 2: Point-of-Sale (POS) and inventory management endpoints.
+- Sprint 3: Analytics dashboard and Python ETS forecasting service integration.
+- Sprint 4: Chatbot, expenses, and facial recognition attendance endpoints.
 
 ## Working repository checks (available now)
 
 Run these from the repository root:
 
-| Command                | Purpose                                              |
-| ---------------------- | ---------------------------------------------------- |
-| `npm run lint`         | Run ESLint.                                          |
-| `npm run format:check` | Check formatting with Prettier.                      |
-| `npm run typecheck`    | Run `tsc -b` for the configured TypeScript projects. |
+| Command                | Purpose                                                |
+| ---------------------- | ------------------------------------------------------ |
+| `npm run lint`         | Run ESLint across all TypeScript and JavaScript files. |
+| `npm run format:check` | Check formatting with Prettier.                        |
+| `npm run typecheck`    | Run `tsc -b` across frontend, node, and backend.       |
+| `npm run test:backend` | Run backend automated test suite with Vitest.          |
+| `npm run dev:backend`  | Start backend development server with hot-reload.      |
 
-When a backend `tsconfig.json` is added, strict mode is a requirement for that configuration, and
-the root `typecheck` script must be extended to include it.
+## Environment and database setup
 
-## Planned (not yet available): Environment and database setup
+A placeholder environment template is available in `backend/.env.example`. To run the backend locally, copy it to `backend/.env` and update with your local MySQL credentials:
 
-There is no `backend/.env.example` yet. Do not try to copy one. Real `.env` files must remain
-untracked, and any future example file must contain placeholders only.
+```sh
+cp backend/.env.example backend/.env
+```
 
-The following database provisioning and variables are plans, not setup steps to run today. Once
-the database and backend are implemented, provision MySQL 8 with a dedicated least-privilege user
-(not `root`) and add working setup instructions:
+Real `.env` files are ignored and must never be committed.
 
 ```sql
 CREATE DATABASE pharmasense CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

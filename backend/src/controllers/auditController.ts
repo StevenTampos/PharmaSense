@@ -1,0 +1,58 @@
+import type { Request, Response } from "express";
+import { query } from "../config/database.ts";
+import type { AuditLog } from "../types/index.ts";
+import type { RowDataPacket } from "mysql2/promise";
+
+interface AuditLogRow extends AuditLog, RowDataPacket {}
+
+export async function getAuditLogs(req: Request, res: Response): Promise<void> {
+  const { module, action, search, limit = "50", offset = "0" } = req.query;
+
+  const conditions: string[] = [];
+  const params: (string | number | boolean | Date | null | undefined)[] = [];
+
+  if (typeof module === "string" && module.trim()) {
+    conditions.push("module = ?");
+    params.push(module.trim());
+  }
+
+  if (typeof action === "string" && action.trim()) {
+    conditions.push("action = ?");
+    params.push(action.trim());
+  }
+
+  if (typeof search === "string" && search.trim()) {
+    conditions.push("LOWER(description) LIKE ?");
+    params.push(`%${search.trim().toLowerCase()}%`);
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+  const parsedLimit = Math.min(Math.max(Number(limit) || 50, 1), 200);
+  const parsedOffset = Math.max(Number(offset) || 0, 0);
+
+  const sql = `
+    SELECT
+      id,
+      user_id,
+      action,
+      module,
+      record_id,
+      description,
+      ip_address,
+      device,
+      created_at
+    FROM audit_logs
+    ${whereClause}
+    ORDER BY created_at DESC
+    LIMIT ? OFFSET ?
+  `;
+
+  params.push(parsedLimit, parsedOffset);
+
+  const logs = await query<AuditLogRow[]>(sql, params);
+
+  res.status(200).json({
+    status: "success",
+    data: logs,
+  });
+}
