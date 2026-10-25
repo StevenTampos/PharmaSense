@@ -1,9 +1,15 @@
+import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": fileURLToPath(new URL("./frontend/src", import.meta.url)),
+    },
+  },
   test: {
     globals: true,
     environment: "node",
-    include: ["backend/tests/**/*.test.ts"],
+    include: ["backend/tests/**/*.test.ts", "frontend/src/**/*.test.ts"],
   },
 });
