@@ -21,13 +21,13 @@ export function isRequired(value: string): boolean {
 }
 
 /**
- * Checks whether a phone number contains digits only.
+ * Checks whether a phone number contains digits with optional common formatting.
  *
  * @param phone - Phone number to validate.
- * @returns Whether the phone number contains only digits.
+ * @returns Whether the trimmed phone number contains digits and common separators only.
  */
-export function isDigitsOnlyPhone(phone: string): boolean {
-  return /^\d+$/.test(phone);
+export function isValidPhoneNumber(phone: string): boolean {
+  return /^[\d\s()+.-]+$/.test(phone.trim()) && /\d/.test(phone);
 }
 
 /**

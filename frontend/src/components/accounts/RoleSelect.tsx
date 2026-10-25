@@ -8,6 +8,7 @@ interface RoleSelectProps {
   value: UserRole | "";
   onChange: (role: UserRole | "") => void;
   label?: string;
+  labelClassName?: string;
   canChoosePlaceholder?: boolean;
   disabled?: boolean;
 }
@@ -29,6 +30,7 @@ function RoleSelect({
   value,
   onChange,
   label = "Role",
+  labelClassName,
   canChoosePlaceholder = false,
   disabled = false,
 }: RoleSelectProps): ReactElement {
@@ -37,6 +39,7 @@ function RoleSelect({
       disabled={disabled}
       id={id}
       label={label}
+      labelClassName={labelClassName}
       onChange={(event) => onChange(event.target.value as UserRole | "")}
       options={ROLE_OPTIONS}
       placeholder={canChoosePlaceholder ? "Choose role" : undefined}

@@ -19,7 +19,7 @@ const UNAVAILABLE_DASHBOARD_MESSAGE = "The dashboard for your role is not availa
  */
 function LoginForm(): ReactElement {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, logout } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -45,6 +45,7 @@ function LoginForm(): ReactElement {
       }
 
       if (!hasBuiltDashboard(response.data.role)) {
+        logout();
         setMessage(UNAVAILABLE_DASHBOARD_MESSAGE);
         return;
       }

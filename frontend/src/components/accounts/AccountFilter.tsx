@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { ReactElement } from "react";
 import SelectField from "@/components/ui/SelectField";
 import { ROLE_LABELS } from "@/lib/roles";
@@ -39,13 +40,46 @@ function AccountFilter({
   onClear,
   onToggle,
 }: AccountFilterProps): ReactElement {
+  const filterRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: PointerEvent): void {
+      const target = event.target;
+
+      if (target instanceof Node && !filterRef.current?.contains(target)) {
+        onToggle();
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent): void {
+      if (event.key === "Escape") {
+        onToggle();
+        triggerRef.current?.focus();
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen, onToggle]);
+
   return (
-    <div className="relative">
+    <div className="relative" ref={filterRef}>
       <button
         aria-expanded={isOpen}
         aria-haspopup="true"
         className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 dark:border-neutral-700 dark:bg-neutral-900 dark:text-slate-200 dark:hover:bg-neutral-800"
         onClick={onToggle}
+        ref={triggerRef}
         type="button"
       >
         <svg aria-hidden="true" className="h-4 w-4" fill="none" viewBox="0 0 20 20">

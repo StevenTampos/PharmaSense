@@ -46,7 +46,6 @@ Done:
 - `@` import alias, strict TypeScript, and ESLint and Prettier tooling for `.ts` and `.tsx` files.
 - Login, protected administrator routes, the administrator dashboard, and account management.
 - Mock-backed account administration using the same in-memory store as mock authentication.
-- A frontend environment example file. There is no `frontend/.env.example` yet.
 - `frontend/.env.example` with the temporary mock login setting (`VITE_MOCK_LOGIN_PASSWORD`).
 
 Not done yet:

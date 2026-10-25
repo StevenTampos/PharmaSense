@@ -3,7 +3,7 @@ import type { FormEvent, ReactElement } from "react";
 import PasswordField from "@/components/ui/PasswordField";
 import TextField from "@/components/ui/TextField";
 import RoleSelect from "@/components/accounts/RoleSelect";
-import { isDigitsOnlyPhone, isRequired, isValidEmail, passwordsMatch } from "@/lib/validators";
+import { isValidPhoneNumber, isRequired, isValidEmail, passwordsMatch } from "@/lib/validators";
 import type { UserRole } from "@/types/account";
 
 export interface AddUserFormValues {
@@ -71,14 +71,16 @@ function AddUserForm({
     }
     if (!isRequired(values.phone)) {
       errors.phone = "Phone number is required.";
-    } else if (!isDigitsOnlyPhone(values.phone)) {
-      errors.phone = "Phone number must contain digits only.";
+    } else if (!isValidPhoneNumber(values.phone)) {
+      errors.phone = "Enter a valid phone number using digits and common separators only.";
     }
     if (!values.role) {
       errors.role = "Choose a role.";
     }
     if (!isRequired(values.password)) {
       errors.password = "Password is required.";
+    } else if (values.password.length < 8) {
+      errors.password = "Password must be at least 8 characters long.";
     }
     if (!isRequired(values.confirmPassword)) {
       errors.confirmPassword = "Confirm password is required.";

@@ -109,7 +109,7 @@ export async function addAccount(details: NewAccountDetails): Promise<ApiRespons
     firstName: details.firstName.trim(),
     lastName: details.lastName.trim(),
     email: details.email.trim(),
-    phone: details.phone,
+    phone: details.phone.trim(),
     role: details.role,
     status: "active",
   };

@@ -6,6 +6,7 @@ import {
   setAccountStatus,
 } from "@/services/accountService";
 import type { NewAccountDetails } from "@/services/accountService";
+import { getAccountSearchText, upsertAccount } from "@/lib/accounts";
 import type { Account, AccountStatus, UserRole } from "@/types/account";
 import type { ApiResponse } from "@/types/api";
 
@@ -75,15 +76,7 @@ export function useAccounts(): UseAccountsResult {
     const normalizedKeyword = searchKeyword.trim().toLowerCase();
 
     return accounts.filter((account) => {
-      const searchableText = [
-        account.firstName,
-        account.lastName,
-        account.email,
-        account.role.replaceAll("_", " "),
-        account.phone,
-      ]
-        .join(" ")
-        .toLowerCase();
+      const searchableText = getAccountSearchText(account);
 
       return (
         (!normalizedKeyword || searchableText.includes(normalizedKeyword)) &&
@@ -111,11 +104,7 @@ export function useAccounts(): UseAccountsResult {
       }
 
       const updatedAccount = response.data;
-      setAccounts((currentAccounts) =>
-        currentAccounts.map((account) =>
-          account.id === updatedAccount.id ? updatedAccount : account,
-        ),
-      );
+      setAccounts((currentAccounts) => upsertAccount(currentAccounts, updatedAccount));
       return response;
     } catch (caughtError: unknown) {
       const message = getErrorMessage(caughtError, fallbackMessage);

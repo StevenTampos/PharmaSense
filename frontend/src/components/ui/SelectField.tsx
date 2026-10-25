@@ -8,6 +8,7 @@ interface SelectOption {
 interface SelectFieldProps extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "id"> {
   id: string;
   label: string;
+  labelClassName?: string;
   options: readonly SelectOption[];
   placeholder?: string;
 }
@@ -24,11 +25,15 @@ function SelectField({
   options,
   placeholder,
   className,
+  labelClassName,
   ...props
 }: SelectFieldProps): ReactElement {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm font-medium text-slate-700 dark:text-slate-200" htmlFor={id}>
+      <label
+        className={`text-sm font-medium text-slate-700 dark:text-slate-200 ${labelClassName ?? ""}`}
+        htmlFor={id}
+      >
         {label}
       </label>
       <select

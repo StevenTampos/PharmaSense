@@ -64,6 +64,7 @@ function AccountRow({
               disabled={isOwnAccount || isActionLoading}
               id={`role-${account.id}`}
               label={`Change role for ${fullName}`}
+              labelClassName="sr-only"
               onChange={(role) => {
                 if (role) {
                   setSelectedRole(role);
@@ -74,7 +75,10 @@ function AccountRow({
             <button
               className="rounded-lg bg-teal-700 px-3 py-3 text-xs font-semibold text-white hover:bg-teal-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 disabled:cursor-not-allowed disabled:opacity-50"
               disabled={isOwnAccount || isActionLoading || selectedRole === account.role}
-              onClick={() => onRequestRoleChange(account, selectedRole)}
+              onClick={() => {
+                onRequestRoleChange(account, selectedRole);
+                setSelectedRole(account.role);
+              }}
               type="button"
             >
               Change role
