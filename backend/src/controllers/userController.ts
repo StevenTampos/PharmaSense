@@ -9,7 +9,30 @@ interface UserRow extends User, RowDataPacket {}
 
 const VALID_ROLES: UserRole[] = ["Administrator", "Cashier/Pharmacist", "Inventory Manager"];
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+function isValidEmail(email: string): boolean {
+  if (email.length > 254) {
+    return false;
+  }
+  const atIndex = email.indexOf("@");
+  if (atIndex <= 0 || atIndex !== email.lastIndexOf("@")) {
+    return false;
+  }
+
+  const local = email.slice(0, atIndex);
+  const domain = email.slice(atIndex + 1);
+
+  if (local.length > 64 || domain.length === 0) {
+    return false;
+  }
+
+  const domainParts = domain.split(".");
+  if (domainParts.length < 2) {
+    return false;
+  }
+
+  return domainParts.every((part) => part.length > 0 && /^[a-zA-Z0-9-]+$/.test(part));
+}
+
 const PHONE_NUMERIC_REGEX = /^\d{7,15}$/;
 
 export async function getUsers(req: Request, res: Response): Promise<void> {
@@ -102,7 +125,7 @@ export async function createUser(req: Request, res: Response): Promise<void> {
   const normalizedEmail = email.trim().toLowerCase();
   const normalizedPhone = phone.trim();
 
-  if (!EMAIL_REGEX.test(normalizedEmail)) {
+  if (!isValidEmail(normalizedEmail)) {
     res.status(400).json({
       status: "error",
       message: "Invalid email address format.",
