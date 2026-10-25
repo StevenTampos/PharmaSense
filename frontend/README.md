@@ -155,17 +155,23 @@ Run these from the repository root.
 
 Run `npm run lint`, `npm run format:check`, and `npm run typecheck` before every commit.
 
-## Planned (not yet available): Environment setup
+## Environment setup
 
-There is no `frontend/.env.example` yet. Do not try to copy one. Vite is configured with
-`envDir: "frontend"` and will read `frontend/.env` when environment configuration is added.
+A placeholder environment template is available in `frontend/.env.example`. To configure the frontend locally, copy it to `frontend/.env`:
 
-| Variable            | Description                  |
-| ------------------- | ---------------------------- |
-| `VITE_API_BASE_URL` | Base URL of the backend API. |
+```sh
+cp frontend/.env.example frontend/.env
+```
+
+Vite is configured with `envDir: "frontend"` and reads variables from `frontend/.env`.
+
+| Variable                   | Description                                                      |
+| -------------------------- | ---------------------------------------------------------------- |
+| `VITE_MOCK_LOGIN_PASSWORD` | Temporary password for local mock authentication during Sprint 1 |
+| `VITE_API_BASE_URL`        | Base URL of the backend API (for backend integration)            |
 
 Only variables prefixed with `VITE_` are exposed to the browser. **Never put a secret in one.**
-Real `.env` files must stay out of Git; a future example file should contain placeholders only.
+Real `.env` files must stay out of Git; the example file contains placeholders only.
 
 ## Testing
 
