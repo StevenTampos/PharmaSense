@@ -188,6 +188,23 @@ describe("Authentication API (Sprint 1)", () => {
   });
 
   describe("POST /api/auth/logout", () => {
+    it("does not throttle the logout route with the login attempt limiter", async () => {
+      const token = jwt.sign(
+        { id: 1, email: mockAdminUser.email, role: mockAdminUser.role },
+        config.jwt.secret,
+        { expiresIn: "1h" },
+      );
+      vi.mocked(query).mockResolvedValue([mockAdminUser] as unknown as RowDataPacket[]);
+
+      const responses = await Promise.all(
+        Array.from({ length: 21 }, () =>
+          request(app).post("/api/auth/logout").set("Authorization", `Bearer ${token}`),
+        ),
+      );
+
+      expect(responses.every((response) => response.status === 200)).toBe(true);
+    });
+
     it("logs out successfully and records audit log", async () => {
       const token = jwt.sign(
         { id: 1, email: mockAdminUser.email, role: mockAdminUser.role },
