@@ -6,6 +6,7 @@ interface ModalProps {
   children: ReactNode;
   onClose: () => void;
   canCloseOnOverlayClick?: boolean;
+  isCloseDisabled?: boolean;
 }
 
 const FOCUSABLE_ELEMENTS =
@@ -22,6 +23,7 @@ function Modal({
   children,
   onClose,
   canCloseOnOverlayClick = true,
+  isCloseDisabled = false,
 }: ModalProps): ReactElement {
   const dialogRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
@@ -103,7 +105,8 @@ function Modal({
           </h2>
           <button
             aria-label="Close dialog"
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-teal-700 dark:hover:bg-neutral-800"
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-teal-700 disabled:cursor-not-allowed disabled:opacity-40 dark:hover:bg-neutral-800"
+            disabled={isCloseDisabled}
             onClick={onClose}
             type="button"
           >

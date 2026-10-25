@@ -23,8 +23,19 @@ function ConfirmDialog({
   onCancel,
   isConfirming = false,
 }: ConfirmDialogProps): ReactElement {
+  function handleClose(): void {
+    if (!isConfirming) {
+      onCancel();
+    }
+  }
+
   return (
-    <Modal title={title} onClose={onCancel}>
+    <Modal
+      canCloseOnOverlayClick={!isConfirming}
+      isCloseDisabled={isConfirming}
+      onClose={handleClose}
+      title={title}
+    >
       <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">{message}</p>
       <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
         <button
