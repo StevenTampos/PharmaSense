@@ -1,11 +1,11 @@
 # Database
 
-This directory is reserved for the planned version-controlled MySQL schema and synthetic seed data
-for PharmaSense. The executable database implementation is not available yet.
+This directory contains the version-controlled MySQL 8 schema migrations and synthetic seed data
+for PharmaSense. Sprint 1 implements authentication and account management (`users` and `audit_logs`).
 
 > This guide covers database plans and standards. See [CONTRIBUTING.md](../CONTRIBUTING.md) for
-> contribution and review workflow. Repository-owner settings are documented in
-> [docs/repository-settings.md](../docs/repository-settings.md). How the API uses the database is in
+> contribution and review workflow. Detailed table definitions and test case mappings are in
+> [docs/database-schema.md](../docs/database-schema.md). How the API uses the database is in
 > the [backend guide](../backend/README.md).
 
 ## Directory layout
@@ -15,7 +15,7 @@ for PharmaSense. The executable database implementation is not available yet.
 | `migrations/` | Ordered schema changes for tables, relationships, and indexes. |
 | `seeds/`      | Synthetic records for local development and tests.             |
 
-Use migrations to keep schema changes reproducible across the team's environments. Select the migration tool alongside the backend implementation.
+Use migrations to keep schema changes reproducible across the team's environments.
 
 Never commit real pharmacy records, employee data, database exports, or backups. Keep backups in the ignored root `backups/` directory.
 
@@ -23,13 +23,16 @@ Never commit real pharmacy records, employee data, database exports, or backups.
 
 Done:
 
-- The folder structure, ignore rules for backups and local data, and the naming rules below.
+- The folder structure, ignore rules for backups and local data, and database coding conventions.
+- Sprint 1 executable schema migrations: `001_create_users.sql` and `002_create_audit_logs.sql`.
+- Sprint 1 synthetic seeds: `001_seed_users.sql` and `002_seed_audit_logs.sql`.
+- Table design and data dictionary documented in [docs/database-schema.md](../docs/database-schema.md).
 
-Not done yet:
+Planned for future sprints:
 
-- The migration tool (undecided, to be chosen with the backend).
-- Executable migrations, seed scripts, and the `npm run migrate` and `npm run seed` commands.
-- The actual table design (an ERD or schema document in `docs/`).
+- Sprint 2 tables: inventory batches, product catalog, stock receipts, and POS transactions.
+- Sprints 3 & 4 tables: expenses, cheque tracker, attendance records, and system settings.
+- Backend automated migration runner tool integration.
 
 ## Planned (not yet available): Local database setup
 
