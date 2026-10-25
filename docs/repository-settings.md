@@ -29,7 +29,7 @@ In GitHub **Settings**:
 - Standard GitHub-hosted Actions runners are free for public repositories. Larger runners and storage have separate limits or charges; do not enable paid services as part of the baseline.
 - Enable available Dependabot alerts, secret scanning, and push protection. CodeQL and Dependency Review are configured via workflow files under `.github/workflows/`.
 
-The workflows grant read-only access. Reviewdog emits GitHub Actions annotations rather than write-enabled review comments. No personal access token or external review service is required. Dependency installation can execute package scripts, so use GitHub-hosted ephemeral runners without application secrets for PR checks. Do not use privileged `pull_request_target` execution of untrusted PR code.
+The workflows grant read-only access by default. Reviewdog emits GitHub Actions annotations rather than write-enabled review comments. No personal access token or external review service is required. Dependency installation can execute package scripts, so use GitHub-hosted ephemeral runners without application secrets for PR checks. Do not use privileged `pull_request_target` execution of untrusted PR code; the automated Dependabot PR formatting workflow uses `pull_request_target` strictly for `dependabot[bot]` to format PR descriptions without checking out or executing untrusted code.
 
 ## Protect main
 
