@@ -15,6 +15,10 @@ export const pool: Pool = mysql.createPool({
   charset: "utf8mb4",
 });
 
+export async function closeDatabasePool(): Promise<void> {
+  await pool.end();
+}
+
 export type DbValue = string | number | boolean | null | undefined | Date;
 
 export async function query<T extends RowDataPacket[]>(

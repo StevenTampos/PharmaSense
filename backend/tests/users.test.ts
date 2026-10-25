@@ -87,6 +87,25 @@ describe("User Management API (Sprint 1)", () => {
       expect(res.body.data.length).toBe(2);
       expect(res.body.data[0].password_hash).toBeUndefined();
     });
+
+    it("escapes SQL LIKE wildcards in user search input", async () => {
+      vi.mocked(query)
+        .mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[])
+        .mockResolvedValueOnce([] as unknown as RowDataPacket[]);
+
+      const res = await request(app)
+        .get("/api/users")
+        .query({ search: "50%_\\\\" })
+        .set("Authorization", `Bearer ${adminToken}`);
+
+      expect(res.status).toBe(200);
+      expect(query).toHaveBeenLastCalledWith(expect.stringContaining("ESCAPE"), [
+        "%50\\%\\_\\\\\\\\%",
+        "%50\\%\\_\\\\\\\\%",
+        "%50\\%\\_\\\\\\\\%",
+        "%50\\%\\_\\\\\\\\%",
+      ]);
+    });
   });
 
   describe("POST /api/users (Add User)", () => {

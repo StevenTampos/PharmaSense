@@ -9,6 +9,10 @@ interface UserRow extends User, RowDataPacket {}
 
 const VALID_ROLES: UserRole[] = ["Administrator", "Cashier/Pharmacist", "Inventory Manager"];
 
+function escapeLikePattern(value: string): string {
+  return value.replace(/[\\%_]/g, "\\$&");
+}
+
 function isValidEmail(email: string): boolean {
   if (email.length > 254) {
     return false;
@@ -60,9 +64,9 @@ export async function getUsers(req: Request, res: Response): Promise<void> {
   }
 
   if (typeof search === "string" && search.trim()) {
-    const term = `%${search.trim().toLowerCase()}%`;
+    const term = `%${escapeLikePattern(search.trim().toLowerCase())}%`;
     conditions.push(
-      "(LOWER(first_name) LIKE ? OR LOWER(last_name) LIKE ? OR LOWER(email) LIKE ? OR phone LIKE ?)",
+      "(LOWER(first_name) LIKE ? ESCAPE '\\\\' OR LOWER(last_name) LIKE ? ESCAPE '\\\\' OR LOWER(email) LIKE ? ESCAPE '\\\\' OR phone LIKE ? ESCAPE '\\\\')",
     );
     params.push(term, term, term, term);
   }

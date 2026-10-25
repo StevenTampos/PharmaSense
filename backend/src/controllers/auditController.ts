@@ -4,6 +4,13 @@ import type { AuditLog } from "../types/index.ts";
 import type { RowDataPacket } from "mysql2/promise";
 
 interface AuditLogRow extends AuditLog, RowDataPacket {}
+interface CountRow extends RowDataPacket {
+  total: number;
+}
+
+function escapeLikePattern(value: string): string {
+  return value.replace(/[\\%_]/g, "\\$&");
+}
 
 export async function getAuditLogs(req: Request, res: Response): Promise<void> {
   const { module, action, search, limit = "50", offset = "0" } = req.query;
@@ -22,8 +29,8 @@ export async function getAuditLogs(req: Request, res: Response): Promise<void> {
   }
 
   if (typeof search === "string" && search.trim()) {
-    conditions.push("LOWER(description) LIKE ?");
-    params.push(`%${search.trim().toLowerCase()}%`);
+    conditions.push("LOWER(description) LIKE ? ESCAPE '\\\\'");
+    params.push(`%${escapeLikePattern(search.trim().toLowerCase())}%`);
   }
 
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
@@ -52,12 +59,22 @@ export async function getAuditLogs(req: Request, res: Response): Promise<void> {
     LIMIT ? OFFSET ?
   `;
 
-  params.push(parsedLimit, parsedOffset);
-
-  const logs = await query<AuditLogRow[]>(sql, params);
+  const countRows = await query<CountRow[]>(
+    `SELECT COUNT(*) AS total FROM audit_logs ${whereClause}`,
+    params,
+  );
+  const logs = await query<AuditLogRow[]>(sql, [...params, parsedLimit, parsedOffset]);
+  const total = Number(countRows[0]?.total ?? 0);
+  const page = Math.floor(parsedOffset / parsedLimit) + 1;
 
   res.status(200).json({
     status: "success",
-    data: logs,
+    data: {
+      logs,
+      total,
+      page,
+      limit: parsedLimit,
+      totalPages: Math.ceil(total / parsedLimit),
+    },
   });
 }

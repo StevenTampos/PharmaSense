@@ -67,9 +67,10 @@ describe("Audit log API", () => {
     expect(response.status).toBe(403);
   });
 
-  it("returns filtered logs and binds pagination as integers", async () => {
+  it("returns filtered logs with integer pagination and total metadata", async () => {
     vi.mocked(query)
       .mockResolvedValueOnce([admin] as unknown as RowDataPacket[])
+      .mockResolvedValueOnce([{ total: 3 }] as unknown as RowDataPacket[])
       .mockResolvedValueOnce([auditLog] as unknown as RowDataPacket[]);
 
     const response = await request(app)
@@ -84,8 +85,14 @@ describe("Audit log API", () => {
       .set("Authorization", `Bearer ${tokenFor(admin)}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.data).toHaveLength(1);
-    expect(query).toHaveBeenLastCalledWith(expect.stringContaining("LIMIT ? OFFSET ?"), [
+    expect(response.body.data.logs).toHaveLength(1);
+    expect(response.body.data).toMatchObject({ total: 3, page: 1, limit: 10, totalPages: 1 });
+    expect(query).toHaveBeenNthCalledWith(2, expect.stringContaining("ESCAPE"), [
+      "Authentication",
+      "LOGIN",
+      "%logged in%",
+    ]);
+    expect(query).toHaveBeenNthCalledWith(3, expect.stringContaining("LIMIT ? OFFSET ?"), [
       "Authentication",
       "LOGIN",
       "%logged in%",
@@ -94,9 +101,25 @@ describe("Audit log API", () => {
     ]);
   });
 
+  it("escapes SQL LIKE wildcards in audit searches", async () => {
+    vi.mocked(query)
+      .mockResolvedValueOnce([admin] as unknown as RowDataPacket[])
+      .mockResolvedValueOnce([{ total: 0 }] as unknown as RowDataPacket[])
+      .mockResolvedValueOnce([] as unknown as RowDataPacket[]);
+
+    const response = await request(app)
+      .get("/api/audit-logs")
+      .query({ search: "50%_\\" })
+      .set("Authorization", `Bearer ${tokenFor(admin)}`);
+
+    expect(response.status).toBe(200);
+    expect(query).toHaveBeenNthCalledWith(2, expect.stringContaining("ESCAPE"), ["%50\\%\\_\\\\%"]);
+  });
+
   it("clamps pagination bounds and falls back on non-numeric values", async () => {
     vi.mocked(query)
       .mockResolvedValueOnce([admin] as unknown as RowDataPacket[])
+      .mockResolvedValueOnce([{ total: 0 }] as unknown as RowDataPacket[])
       .mockResolvedValueOnce([] as unknown as RowDataPacket[]);
 
     const response = await request(app)
@@ -105,7 +128,7 @@ describe("Audit log API", () => {
       .set("Authorization", `Bearer ${tokenFor(admin)}`);
 
     expect(response.status).toBe(200);
-    expect(query).toHaveBeenLastCalledWith(expect.stringContaining("LIMIT ? OFFSET ?"), [50, 0]);
+    expect(query).toHaveBeenNthCalledWith(3, expect.stringContaining("LIMIT ? OFFSET ?"), [50, 0]);
   });
 
   it("returns 500 when database lookup fails during token authentication", async () => {
