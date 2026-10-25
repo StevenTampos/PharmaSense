@@ -27,9 +27,9 @@ In GitHub **Settings**:
 - Enable automatic deletion of merged branches.
 - Under **Actions / General**, allow the pinned Actions used by the workflows, keep the default workflow token read-only, and leave workflow permission to create/approve PRs disabled.
 - Standard GitHub-hosted Actions runners are free for public repositories. Larger runners and storage have separate limits or charges; do not enable paid services as part of the baseline.
-- Enable available Dependabot alerts, secret scanning, and push protection. Consider CodeQL when application source exists; availability does not mean a scan is configured.
+- Enable available Dependabot alerts, secret scanning, and push protection. CodeQL and Dependency Review are configured via workflow files under `.github/workflows/`.
 
-The workflows grant read-only access. Reviewdog emits GitHub Actions annotations rather than write-enabled review comments. No personal access token or external review service is required. Dependency installation can execute package scripts, so use GitHub-hosted ephemeral runners without application secrets for PR checks. Do not use privileged `pull_request_target` execution of untrusted PR code.
+The workflows grant read-only access by default. Reviewdog emits GitHub Actions annotations rather than write-enabled review comments. No personal access token or external review service is required. Dependency installation can execute package scripts, so use GitHub-hosted ephemeral runners without application secrets for PR checks. Do not use privileged `pull_request_target` execution of untrusted PR code; the automated Dependabot PR formatting workflow uses `pull_request_target` strictly for `dependabot[bot]` to format PR descriptions without checking out or executing untrusted code.
 
 ## Protect main
 
@@ -41,7 +41,7 @@ Use one protection method, not overlapping rulesets and classic rules. A branch 
 4. Enable **Restrict deletions** and **Block force pushes**.
 5. Enable **Require a pull request before merging**, with **one approval**, **Require review from Code Owners**, and dismissal of stale approvals when new commits modify reviewed code.
 6. Enable required conversation resolution.
-7. Enable required status checks and select the actual GitHub Actions checks `quality` and `pr-title` after they appear in the picker.
+7. Enable required status checks and select the actual GitHub Actions checks `quality`, `pr-title`, `codeql (actions)`, `codeql (javascript-typescript)`, and `dependency-review` after they appear in the picker.
 
 Do not enable a blanket update restriction that stops collaborators from merging already approved PRs. Avoid extra rules such as required deployments, signed commits, or a merge queue for this small team.
 
@@ -59,7 +59,7 @@ Private GitHub Free does not provide the protected-branch enforcement needed her
 
 Use a small test PR after settings changes are authorized:
 
-1. Confirm lint and formatting run and the check names are `quality` and `pr-title`.
+1. Confirm lint, formatting, typecheck, and build run in the `quality` job, and that `pr-title`, `codeql (actions)`, `codeql (javascript-typescript)`, and `dependency-review` checks run on the PR.
 2. Introduce a temporary lint error in the test PR. Confirm the quality check fails and Reviewdog annotates the changed line, then remove it.
 3. Give the PR an invalid title, then fix it. Confirm title edits rerun the title check.
 4. Confirm a teammate's approval alone cannot satisfy code-owner review and direct teammate pushes to `main` are rejected.
