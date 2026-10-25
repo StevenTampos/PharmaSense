@@ -5,9 +5,7 @@ import { authLimiter } from "../middleware/rateLimiter.ts";
 
 const router = Router();
 
-router.use(authLimiter);
-
-router.post("/login", login);
+router.post("/login", authLimiter, login);
 router.post("/logout", authenticateToken, logout);
 router.get("/me", authenticateToken, getMe);
 

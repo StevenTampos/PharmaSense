@@ -29,8 +29,8 @@ export async function recordAuditLog(params: RecordAuditParams): Promise<void> {
     params.action,
     params.module,
     params.recordId != null ? String(params.recordId) : null,
-    params.description,
+    params.description.slice(0, 500),
     params.ipAddress ?? null,
-    params.device ?? null,
+    params.device ? String(params.device).slice(0, 255) : null,
   ]);
 }

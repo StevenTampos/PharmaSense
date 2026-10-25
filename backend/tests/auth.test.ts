@@ -143,6 +143,48 @@ describe("Authentication API (Sprint 1)", () => {
       expect(res.body.status).toBe("success");
       expect(res.body.data.email).toBe("admin@pharmasense.local");
     });
+
+    it("returns 401 for invalid token before querying the database", async () => {
+      const response = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", "Bearer not-a-valid-jwt");
+
+      expect(response.status).toBe(401);
+      expect(query).not.toHaveBeenCalled();
+    });
+
+    it("returns 500 when the database is unavailable during token verification", async () => {
+      const token = jwt.sign(
+        { id: 1, email: mockAdminUser.email, role: mockAdminUser.role },
+        config.jwt.secret,
+        { expiresIn: "1h" },
+      );
+      vi.mocked(query).mockRejectedValueOnce(new Error("database unavailable"));
+
+      const response = await request(app)
+        .get("/api/auth/me")
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(500);
+      expect(response.body.message).toContain("Database error");
+    });
+
+    it("does not apply the login throttle to profile requests", async () => {
+      vi.mocked(query).mockResolvedValue([mockAdminUser] as unknown as RowDataPacket[]);
+      const token = jwt.sign(
+        { id: 1, email: mockAdminUser.email, role: mockAdminUser.role },
+        config.jwt.secret,
+        { expiresIn: "1h" },
+      );
+
+      const responses = await Promise.all(
+        Array.from({ length: 25 }, () =>
+          request(app).get("/api/auth/me").set("Authorization", `Bearer ${token}`),
+        ),
+      );
+
+      expect(responses.every((response) => response.status === 200)).toBe(true);
+    });
   });
 
   describe("POST /api/auth/logout", () => {

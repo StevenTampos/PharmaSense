@@ -36,44 +36,54 @@ export async function authenticateToken(
     return;
   }
 
+  let payload: AuthTokenPayload;
   try {
-    const payload = jwt.verify(token, config.jwt.secret) as AuthTokenPayload;
-
-    const rows = await query<UserStatusRow[]>(
-      "SELECT id, status, role FROM users WHERE id = ? LIMIT 1",
-      [payload.id],
-    );
-
-    if (rows.length === 0) {
-      res.status(401).json({
-        status: "error",
-        message: "Account not found.",
-      });
-      return;
-    }
-
-    const currentUser = rows[0];
-    if (currentUser.status === "Inactive") {
-      res.status(403).json({
-        status: "error",
-        message: "Account is deactivated. Access denied.",
-      });
-      return;
-    }
-
-    req.user = {
-      id: currentUser.id,
-      email: payload.email,
-      role: currentUser.role,
-    };
-
-    next();
+    payload = jwt.verify(token, config.jwt.secret) as AuthTokenPayload;
   } catch {
     res.status(401).json({
       status: "error",
       message: "Invalid or expired authentication token.",
     });
+    return;
   }
+
+  let rows: UserStatusRow[];
+  try {
+    rows = await query<UserStatusRow[]>("SELECT id, status, role FROM users WHERE id = ? LIMIT 1", [
+      payload.id,
+    ]);
+  } catch {
+    res.status(500).json({
+      status: "error",
+      message: "Database error during authentication verification.",
+    });
+    return;
+  }
+
+  if (rows.length === 0) {
+    res.status(401).json({
+      status: "error",
+      message: "Account not found.",
+    });
+    return;
+  }
+
+  const currentUser = rows[0];
+  if (currentUser.status === "Inactive") {
+    res.status(403).json({
+      status: "error",
+      message: "Account is deactivated. Access denied.",
+    });
+    return;
+  }
+
+  req.user = {
+    id: currentUser.id,
+    email: payload.email,
+    role: currentUser.role,
+  };
+
+  next();
 }
 
 export function requireRole(allowedRoles: UserRole[]) {

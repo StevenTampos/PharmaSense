@@ -149,6 +149,29 @@ describe("User Management API (Sprint 1)", () => {
       expect(res.body.message).toContain("email");
     });
 
+    it.each([
+      "john doe@pharmasense.local",
+      "user\\nname@pharmasense.local",
+      "john..doe@pharmasense.local",
+    ])("rejects email with invalid local-part characters: %s", async (email) => {
+      vi.mocked(query).mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[]);
+
+      const res = await request(app)
+        .post("/api/users")
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({
+          first_name: "John",
+          last_name: "Doe",
+          email,
+          phone: "09123456789",
+          role: "Cashier/Pharmacist",
+          password: "Password123!",
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toContain("email");
+    });
+
     it("rejects user creation with non-numeric phone number", async () => {
       vi.mocked(query).mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[]);
 
@@ -209,6 +232,28 @@ describe("User Management API (Sprint 1)", () => {
       expect(res.status).toBe(400);
       expect(res.body.status).toBe("error");
       expect(res.body.message).toContain("already registered");
+    });
+
+    it("returns duplicate-email conflict when concurrent inserts race", async () => {
+      vi.mocked(query)
+        .mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[]) // auth
+        .mockResolvedValueOnce([] as unknown as RowDataPacket[]); // email pre-check
+      vi.mocked(execute).mockRejectedValueOnce({ code: "ER_DUP_ENTRY" });
+
+      const res = await request(app)
+        .post("/api/users")
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({
+          first_name: "John",
+          last_name: "Doe",
+          email: "existing@pharmasense.local",
+          phone: "09123456789",
+          role: "Cashier/Pharmacist",
+          password: "Password123!",
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe("Email is already registered.");
     });
 
     it("creates a new user with Active status and records audit log", async () => {
@@ -302,6 +347,22 @@ describe("User Management API (Sprint 1)", () => {
       expect(res.body.status).toBe("success");
       expect(res.body.data.status).toBe("Active");
       expect(execute).toHaveBeenCalled(); // update & audit log
+    });
+
+    it("does not expose password hash when status is already set", async () => {
+      vi.mocked(query)
+        .mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[]) // auth
+        .mockResolvedValueOnce([mockStaffUser] as unknown as RowDataPacket[]); // check user
+
+      const res = await request(app)
+        .patch("/api/users/2/status")
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({ status: "Active" });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.email).toBe(mockStaffUser.email);
+      expect(res.body.data.password_hash).toBeUndefined();
+      expect(execute).not.toHaveBeenCalled();
     });
   });
 });

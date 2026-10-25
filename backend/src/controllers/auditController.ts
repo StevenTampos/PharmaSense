@@ -27,8 +27,13 @@ export async function getAuditLogs(req: Request, res: Response): Promise<void> {
   }
 
   const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
-  const parsedLimit = Math.min(Math.max(Number(limit) || 50, 1), 200);
-  const parsedOffset = Math.max(Number(offset) || 0, 0);
+  const numericLimit = Number(limit);
+  const numericOffset = Number(offset);
+  const parsedLimit = Math.min(
+    Math.max(Number.isFinite(numericLimit) ? Math.floor(numericLimit) : 50, 1),
+    200,
+  );
+  const parsedOffset = Math.max(Number.isFinite(numericOffset) ? Math.floor(numericOffset) : 0, 0);
 
   const sql = `
     SELECT

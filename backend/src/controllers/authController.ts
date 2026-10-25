@@ -10,6 +10,7 @@ import type { RowDataPacket } from "mysql2/promise";
 interface UserRow extends User, RowDataPacket {}
 
 const GENERIC_LOGIN_ERROR = "Invalid email or password.";
+const DUMMY_PASSWORD_HASH = "$2b$12$C6UzMDM.H6dfI/f/IKcEe.4HhH7wZV2t/YwwpOP7t5UQvPvWw7Z4S";
 
 export async function login(req: Request, res: Response): Promise<void> {
   const { email, password } = req.body ?? {};
@@ -31,11 +32,12 @@ export async function login(req: Request, res: Response): Promise<void> {
 
   const normalizedEmail = email.trim().toLowerCase();
 
-  const users = await query<UserRow[]>("SELECT * FROM users WHERE LOWER(email) = ? LIMIT 1", [
+  const users = await query<UserRow[]>("SELECT * FROM users WHERE email = ? LIMIT 1", [
     normalizedEmail,
   ]);
 
   if (users.length === 0) {
+    await bcrypt.compare(password, DUMMY_PASSWORD_HASH);
     await recordAuditLog({
       userId: null,
       action: "LOGIN_FAILED",

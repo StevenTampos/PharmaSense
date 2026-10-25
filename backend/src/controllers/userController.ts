@@ -20,8 +20,16 @@ function isValidEmail(email: string): boolean {
 
   const local = email.slice(0, atIndex);
   const domain = email.slice(atIndex + 1);
+  const localPartCharacters = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+$/;
 
-  if (local.length > 64 || domain.length === 0) {
+  if (
+    local.length > 64 ||
+    domain.length === 0 ||
+    !localPartCharacters.test(local) ||
+    local.startsWith(".") ||
+    local.endsWith(".") ||
+    local.includes("..")
+  ) {
     return false;
   }
 
@@ -158,7 +166,7 @@ export async function createUser(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const existing = await query<UserRow[]>("SELECT id FROM users WHERE LOWER(email) = ? LIMIT 1", [
+  const existing = await query<UserRow[]>("SELECT id FROM users WHERE email = ? LIMIT 1", [
     normalizedEmail,
   ]);
 
@@ -185,14 +193,31 @@ export async function createUser(req: Request, res: Response): Promise<void> {
     ) VALUES (?, ?, ?, ?, ?, ?, NULL, 'Active')
   `;
 
-  const result: ResultSetHeader = await execute(insertSql, [
-    first_name.trim(),
-    last_name.trim(),
-    normalizedEmail,
-    normalizedPhone,
-    role,
-    passwordHash,
-  ]);
+  let result: ResultSetHeader;
+  try {
+    result = await execute(insertSql, [
+      first_name.trim(),
+      last_name.trim(),
+      normalizedEmail,
+      normalizedPhone,
+      role,
+      passwordHash,
+    ]);
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      error.code === "ER_DUP_ENTRY"
+    ) {
+      res.status(400).json({
+        status: "error",
+        message: "Email is already registered.",
+      });
+      return;
+    }
+    throw error;
+  }
 
   const newUserId = result.insertId;
 
@@ -274,9 +299,21 @@ export async function updateUserStatus(req: Request, res: Response): Promise<voi
   const targetUser = existing[0];
 
   if (targetUser.status === status) {
+    const safeUser: SafeUser = {
+      id: targetUser.id,
+      first_name: targetUser.first_name,
+      last_name: targetUser.last_name,
+      email: targetUser.email,
+      phone: targetUser.phone,
+      role: targetUser.role,
+      profile_pic: targetUser.profile_pic,
+      status: targetUser.status,
+      created_at: targetUser.created_at,
+      updated_at: targetUser.updated_at,
+    };
     res.status(200).json({
       status: "success",
-      data: targetUser,
+      data: safeUser,
       message: `Account is already ${status}.`,
     });
     return;
