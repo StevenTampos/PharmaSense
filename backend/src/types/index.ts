@@ -26,6 +26,7 @@ export type AuditLogAction =
   | "CREATE_USER"
   | "ACTIVATE_USER"
   | "DEACTIVATE_USER"
+  | "ROLE_CHANGE"
   | "PASSWORD_CHANGE";
 
 export type AuditLogModule = "Authentication" | "Account Management" | "Inventory" | "POS";

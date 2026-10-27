@@ -49,31 +49,49 @@ scripts/            Repository development tools
 See the guides for [frontend](frontend/README.md), [backend](backend/README.md), [Python
 services](python/README.md), and [database](database/README.md).
 
-## Working setup (available now)
+## Working setup
 
 Install [Node.js 24](https://nodejs.org/) and Git. From the repository root:
 
 ```sh
 npm ci
-npm run dev
-npm run lint
-npm run format:check
-npm run typecheck
-npm run build
+npm run dev:all
 ```
 
-Open the URL printed by Vite (by default `http://localhost:5173`). `npm ci` installs the
-dependencies from `package-lock.json`.
+Open `http://localhost:5173` in your browser.
 
-| Command                | Purpose                                         |
-| ---------------------- | ----------------------------------------------- |
-| `npm run dev`          | Start the Vite development server.              |
-| `npm run build`        | Type-check and build the frontend into `dist/`. |
-| `npm run preview`      | Preview the production build locally.           |
-| `npm run typecheck`    | Run TypeScript project references (`tsc -b`).   |
-| `npm run lint`         | Run ESLint.                                     |
-| `npm run format`       | Format files with Prettier.                     |
-| `npm run format:check` | Check formatting without changing files.        |
+| Command                | Purpose                                                        |
+| ---------------------- | -------------------------------------------------------------- |
+| `npm run dev:all`      | Start frontend and backend development servers concurrently.   |
+| `npm run dev`          | Start the Vite frontend development server only.               |
+| `npm run dev:backend`  | Start the Express API backend development server only.         |
+| `npm run db:setup`     | Automatically create and seed local MySQL database.            |
+| `npm run build`        | Type-check and build the frontend for production into `dist/`. |
+| `npm run test`         | Run the automated test suite with Vitest.                      |
+| `npm run typecheck`    | Run TypeScript project references (`tsc -b`).                  |
+| `npm run lint`         | Run ESLint.                                                    |
+| `npm run format:check` | Check formatting with Prettier.                                |
+
+### Quick start with local MySQL (XAMPP)
+
+1. Start MySQL in the **XAMPP Control Panel**.
+2. Copy the backend environment template:
+   ```sh
+   cp backend/.env.example backend/.env
+   ```
+3. Initialize the database, tables, and test accounts:
+   ```sh
+   npm run db:setup
+   ```
+4. Start the application:
+   ```sh
+   npm run dev:all
+   ```
+
+### Test login credentials
+
+- **Username / Email:** `admin` (or `admin@pharmasense.local`)
+- **Password:** `admin123`
 
 ### Frontend implementation notes
 
@@ -84,16 +102,21 @@ dependencies from `package-lock.json`.
 - Tailwind CSS v4 uses its Vite plugin; there is no Tailwind config or PostCSS setup.
 - Only `VITE_` variables are exposed to browser code. Never put secrets in them.
 
-## Planned (not yet available): backend, database, and environment setup
+## Environment and backend configuration
 
-Backend and database implementations are not available. There are no `.env.example` files, backend
-TypeScript config, migration or seed scripts, or service dependencies yet. Do not copy example
-environment files or run migration or seed commands. Add setup instructions when those files and
-scripts are implemented.
+Backend environment variables are managed via `backend/.env` (copied from `backend/.env.example`).
+Real `.env` files must stay local and out of Git.
 
-Planned environment values include backend connection and authentication settings, Python service
-URLs, and `VITE_API_BASE_URL`. Actual `.env` files must stay local and out of Git. A future database
-user should have access only to the PharmaSense database, not run as `root`.
+| Variable         | Description                                   |
+| ---------------- | --------------------------------------------- |
+| `PORT`           | Express API server port (default `5000`).     |
+| `DB_HOST`        | MySQL host (default `localhost`).             |
+| `DB_PORT`        | MySQL port (default `3306`).                  |
+| `DB_NAME`        | Database name (default `pharmasense`).        |
+| `DB_USER`        | Database user (default `root` in XAMPP).      |
+| `DB_PASSWORD`    | Database password.                            |
+| `JWT_SECRET`     | Secret key for signing authentication tokens. |
+| `JWT_EXPIRES_IN` | Authentication token duration (default `8h`). |
 
 ## API contract and documentation (planned)
 

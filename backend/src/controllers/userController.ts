@@ -360,3 +360,101 @@ export async function updateUserStatus(req: Request, res: Response): Promise<voi
     message: `Account has been ${actionText} successfully.`,
   });
 }
+
+export async function updateUserRole(req: Request, res: Response): Promise<void> {
+  const userId = Number(req.params.id);
+  const { role } = req.body ?? {};
+  const ipAddress = req.ip || req.socket.remoteAddress || null;
+  const device = req.headers["user-agent"] || null;
+
+  if (Number.isNaN(userId)) {
+    res.status(400).json({
+      status: "error",
+      message: "Invalid user ID.",
+    });
+    return;
+  }
+
+  if (!VALID_ROLES.includes(role as UserRole)) {
+    res.status(400).json({
+      status: "error",
+      message:
+        "A valid role must be selected (Administrator, Cashier/Pharmacist, Inventory Manager).",
+    });
+    return;
+  }
+
+  if (req.user && req.user.id === userId && role !== req.user.role) {
+    res.status(400).json({
+      status: "error",
+      message: "Administrators cannot change their own role.",
+    });
+    return;
+  }
+
+  const existing = await query<UserRow[]>("SELECT * FROM users WHERE id = ? LIMIT 1", [userId]);
+
+  if (existing.length === 0) {
+    res.status(404).json({
+      status: "error",
+      message: "User account not found.",
+    });
+    return;
+  }
+
+  const targetUser = existing[0];
+
+  if (targetUser.role === role) {
+    const safeUser: SafeUser = {
+      id: targetUser.id,
+      first_name: targetUser.first_name,
+      last_name: targetUser.last_name,
+      email: targetUser.email,
+      phone: targetUser.phone,
+      role: targetUser.role,
+      profile_pic: targetUser.profile_pic,
+      status: targetUser.status,
+      created_at: targetUser.created_at,
+      updated_at: targetUser.updated_at,
+    };
+    res.status(200).json({
+      status: "success",
+      data: safeUser,
+      message: `Account already has the role ${role}.`,
+    });
+    return;
+  }
+
+  await execute("UPDATE users SET role = ? WHERE id = ?", [role, userId]);
+
+  await recordAuditLog({
+    userId: req.user?.id ?? null,
+    action: "ROLE_CHANGE",
+    module: "Account Management",
+    recordId: String(userId),
+    description: `User account ${targetUser.email} role was changed from ${targetUser.role} to ${role} by ${req.user?.email ?? "Administrator"}`,
+    ipAddress,
+    device,
+  });
+
+  const updatedUsers = await query<UserRow[]>("SELECT * FROM users WHERE id = ? LIMIT 1", [userId]);
+  const updated = updatedUsers[0];
+  const safeUser: SafeUser = {
+    id: updated.id,
+    first_name: updated.first_name,
+    last_name: updated.last_name,
+    email: updated.email,
+    phone: updated.phone,
+    role: updated.role,
+    profile_pic: updated.profile_pic,
+    status: updated.status,
+    created_at: updated.created_at,
+    updated_at: updated.updated_at,
+  };
+
+  res.status(200).json({
+    status: "success",
+    data: safeUser,
+    message: "User role updated successfully.",
+  });
+}

@@ -69,6 +69,7 @@ function AddUserModal({
         email: formValues.email,
         phone: formValues.phone,
         role: formValues.role,
+        password: formValues.password,
       });
 
       if (response.status === "success" && response.data) {

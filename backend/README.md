@@ -53,29 +53,38 @@ Planned for future sprints:
 
 Run these from the repository root:
 
-| Command                | Purpose                                                |
-| ---------------------- | ------------------------------------------------------ |
-| `npm run lint`         | Run ESLint across all TypeScript and JavaScript files. |
-| `npm run format:check` | Check formatting with Prettier.                        |
-| `npm run typecheck`    | Run `tsc -b` across frontend, node, and backend.       |
-| `npm run test:backend` | Run backend automated test suite with Vitest.          |
-| `npm run dev:backend`  | Start backend development server with hot-reload.      |
+| Command                | Purpose                                                      |
+| ---------------------- | ------------------------------------------------------------ |
+| `npm run lint`         | Run ESLint across all TypeScript and JavaScript files.       |
+| `npm run format:check` | Check formatting with Prettier.                              |
+| `npm run typecheck`    | Run `tsc -b` across frontend, node, and backend.             |
+| `npm run test`         | Run full test suite with Vitest.                             |
+| `npm run test:backend` | Run backend automated test suite with Vitest.                |
+| `npm run dev:backend`  | Start backend development server with hot-reload.            |
+| `npm run dev:all`      | Start frontend and backend development servers concurrently. |
+| `npm run db:setup`     | Automatically create and seed local MySQL database.          |
 
 ## Environment and database setup
 
-A placeholder environment template is available in `backend/.env.example`. To run the backend locally, copy it to `backend/.env` and update with your local MySQL credentials:
+A placeholder environment template is available in `backend/.env.example`. To run the backend locally with XAMPP MySQL, copy it to `backend/.env`:
 
 ```sh
 cp backend/.env.example backend/.env
 ```
 
+Ensure MySQL is running in XAMPP, then automatically initialize the database, tables, and test accounts:
+
+```sh
+npm run db:setup
+```
+
 Real `.env` files are ignored and must never be committed.
 
-```sql
-CREATE DATABASE pharmasense CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'pharmasense_user'@'localhost' IDENTIFIED BY '<choose-a-strong-password>';
-GRANT ALL PRIVILEGES ON pharmasense.* TO 'pharmasense_user'@'localhost';
-```
+### Default test credentials
+
+- **Administrator:** `admin` (or `admin@pharmasense.local`) | Password: `admin123`
+- **Pharmacist:** `pharmacist@pharmasense.local` | Password: `PharmacistPassword123!`
+- **Inventory Manager:** `inventory@pharmasense.local` | Password: `InventoryPassword123!`
 
 Potential variable names (the actual environment contract is not defined yet):
 

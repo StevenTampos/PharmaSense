@@ -68,6 +68,19 @@ describe("Authentication API (Sprint 1)", () => {
       expect(execute).toHaveBeenCalled(); // Audit log recorded
     });
 
+    it("successfully logs in using 'admin' as username alias", async () => {
+      vi.mocked(query).mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[]);
+
+      const res = await request(app).post("/api/auth/login").send({
+        email: "admin",
+        password: "AdminPassword123!",
+      });
+
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe("success");
+      expect(res.body.data.user.email).toBe("admin@pharmasense.local");
+    });
+
     it("rejects login with 400 when email or password is empty", async () => {
       const res = await request(app).post("/api/auth/login").send({ email: "", password: "" });
 

@@ -384,4 +384,65 @@ describe("User Management API (Sprint 1)", () => {
       expect(execute).not.toHaveBeenCalled();
     });
   });
+
+  describe("PATCH /api/users/:id/role (Role Update)", () => {
+    it("prevents an administrator from changing their own role", async () => {
+      vi.mocked(query).mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[]);
+
+      const res = await request(app)
+        .patch("/api/users/1/role")
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({ role: "Cashier/Pharmacist" });
+
+      expect(res.status).toBe(400);
+      expect(res.body.status).toBe("error");
+      expect(res.body.message).toContain("cannot change their own role");
+    });
+
+    it("rejects invalid roles with 400", async () => {
+      vi.mocked(query).mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[]);
+
+      const res = await request(app)
+        .patch("/api/users/2/role")
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({ role: "SuperAdmin" });
+
+      expect(res.status).toBe(400);
+      expect(res.body.status).toBe("error");
+      expect(res.body.message).toContain("valid role must be selected");
+    });
+
+    it("returns 404 for non-existent user", async () => {
+      vi.mocked(query)
+        .mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[])
+        .mockResolvedValueOnce([] as unknown as RowDataPacket[]);
+
+      const res = await request(app)
+        .patch("/api/users/999/role")
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({ role: "Inventory Manager" });
+
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("User account not found.");
+    });
+
+    it("updates role successfully and records audit log", async () => {
+      const updatedStaff: User = { ...mockStaffUser, role: "Inventory Manager" };
+
+      vi.mocked(query)
+        .mockResolvedValueOnce([mockAdminUser] as unknown as RowDataPacket[]) // auth
+        .mockResolvedValueOnce([mockStaffUser] as unknown as RowDataPacket[]) // existing check
+        .mockResolvedValueOnce([updatedStaff] as unknown as RowDataPacket[]); // read back
+
+      const res = await request(app)
+        .patch("/api/users/2/role")
+        .set("Authorization", `Bearer ${adminToken}`)
+        .send({ role: "Inventory Manager" });
+
+      expect(res.status).toBe(200);
+      expect(res.body.status).toBe("success");
+      expect(res.body.data.role).toBe("Inventory Manager");
+      expect(execute).toHaveBeenCalled();
+    });
+  });
 });
