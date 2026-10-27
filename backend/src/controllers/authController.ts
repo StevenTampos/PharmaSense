@@ -30,7 +30,8 @@ export async function login(req: Request, res: Response): Promise<void> {
     return;
   }
 
-  const normalizedEmail = email.trim().toLowerCase();
+  const normalizedEmail =
+    email.trim().toLowerCase() === "admin" ? "admin@pharmasense.local" : email.trim().toLowerCase();
 
   const users = await query<UserRow[]>("SELECT * FROM users WHERE email = ? LIMIT 1", [
     normalizedEmail,

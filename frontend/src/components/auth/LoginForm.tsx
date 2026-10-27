@@ -7,7 +7,7 @@ import PasswordField from "@/components/ui/PasswordField";
 import TextField from "@/components/ui/TextField";
 import { hasBuiltDashboard, getHomePathForRole } from "@/lib/roles";
 import { useAuth } from "@/hooks/useAuth";
-import { isValidEmail } from "@/lib/validators";
+import { isValidLoginIdentifier } from "@/lib/validators";
 
 const INVALID_CREDENTIALS_MESSAGE = "Invalid email or password.";
 const UNAVAILABLE_DASHBOARD_MESSAGE = "The dashboard for your role is not available yet.";
@@ -29,7 +29,7 @@ function LoginForm(): ReactElement {
     event.preventDefault();
     setMessage(null);
 
-    if (!email.trim() || !password || !isValidEmail(email)) {
+    if (!email.trim() || !password || !isValidLoginIdentifier(email)) {
       setMessage(INVALID_CREDENTIALS_MESSAGE);
       return;
     }
@@ -63,11 +63,10 @@ function LoginForm(): ReactElement {
       <TextField
         autoComplete="username"
         id="email"
-        label="Email"
+        label="Email or Username"
         name="email"
         onChange={(event) => setEmail(event.target.value)}
-        placeholder="Enter email"
-        type="email"
+        placeholder="Enter email or username (e.g. admin)"
         value={email}
       />
       <PasswordField

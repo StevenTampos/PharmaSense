@@ -11,6 +11,17 @@ export function isValidEmail(email: string): boolean {
 }
 
 /**
+ * Checks whether an identifier is an accepted login value (email or "admin" test alias).
+ *
+ * @param identifier - Login value to validate.
+ * @returns Whether the identifier is valid for login.
+ */
+export function isValidLoginIdentifier(identifier: string): boolean {
+  const trimmed = identifier.trim().toLowerCase();
+  return trimmed === "admin" || isValidEmail(trimmed);
+}
+
+/**
  * Checks whether a required form value contains non-whitespace text.
  *
  * @param value - Value to validate.

@@ -146,14 +146,23 @@ Run these from the repository root.
 | Command                | Purpose                                                          |
 | ---------------------- | ---------------------------------------------------------------- |
 | `npm run dev`          | Start the Vite dev server with hot reload.                       |
+| `npm run dev:all`      | Start frontend and backend development servers concurrently.     |
 | `npm run build`        | Type-check, then build the frontend for production into `dist/`. |
 | `npm run preview`      | Preview the production build locally.                            |
 | `npm run typecheck`    | Run `tsc -b` to catch TypeScript errors.                         |
+| `npm run test`         | Run automated tests with Vitest.                                 |
 | `npm run lint`         | Check TypeScript and React code with ESLint.                     |
 | `npm run format`       | Apply Prettier formatting.                                       |
 | `npm run format:check` | Check formatting without changing files.                         |
 
 Run `npm run lint`, `npm run format:check`, and `npm run typecheck` before every commit.
+
+### Test login credentials
+
+For quick testing and UI reviews, sign in with:
+
+- **Username / Email:** `admin` (or `admin@pharmasense.local`)
+- **Password:** `admin123`
 
 ## Environment setup
 

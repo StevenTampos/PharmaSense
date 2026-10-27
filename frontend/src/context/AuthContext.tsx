@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
-import { login as authenticate } from "@/services/authService";
+import { login as authenticate, logout as authLogout } from "@/services/authService";
 import type { ApiResponse } from "@/types/api";
 import type { AuthUser } from "@/types/auth";
 
@@ -36,6 +36,7 @@ export function AuthProvider({ children }: AuthProviderProps): ReactElement {
   }
 
   function logout(): void {
+    void authLogout();
     setUser(null);
   }
 

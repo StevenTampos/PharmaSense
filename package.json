@@ -10,10 +10,12 @@
   "scripts": {
     "prepare": "husky",
     "dev": "vite",
+    "dev:backend": "tsx watch backend/src/server.ts",
+    "dev:all": "tsx scripts/dev-all.ts",
+    "db:setup": "tsx scripts/setup-db.ts",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
-    "dev:backend": "tsx watch backend/src/server.ts",
     "test": "vitest run",
     "test:backend": "vitest run",
     "lint": "eslint . --max-warnings=0",

@@ -2,10 +2,10 @@
 -- WARNING: Development-only accounts with known passwords. Never use in production.
 --
 -- Account Credentials (Dev Only):
--- 1. admin@pharmasense.local          | Role: Administrator      | Password: AdminPassword123!
--- 2. pharmacist@pharmasense.local     | Role: Cashier/Pharmacist | Password: PharmacistPassword123!
--- 3. inventory@pharmasense.local      | Role: Inventory Manager  | Password: InventoryPassword123!
--- 4. inactive.staff@pharmasense.local | Role: Cashier/Pharmacist | Password: InactivePassword123! (Inactive)
+-- 1. admin@pharmasense.local (or "admin") | Role: Administrator      | Password: admin123
+-- 2. pharmacist@pharmasense.local         | Role: Cashier/Pharmacist | Password: PharmacistPassword123!
+-- 3. inventory@pharmasense.local          | Role: Inventory Manager  | Password: InventoryPassword123!
+-- 4. inactive.staff@pharmasense.local     | Role: Cashier/Pharmacist | Password: InactivePassword123! (Inactive)
 
 INSERT INTO users (
   first_name,
@@ -23,7 +23,7 @@ INSERT INTO users (
   'admin@pharmasense.local',
   '09171234567',
   'Administrator',
-  '$2b$12$DxJu5t82uKi1e30JOZm8JuKigfrhF99vwlXoEbba1.lJ5IuqthhY2',
+  '$2b$10$bDzoIWeDrbmZQOkiBR1Lregzc7JBBvosMoMcdsuMB08Ag7SqBXB5e',
   NULL,
   'Active'
 ),
