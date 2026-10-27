@@ -1,11 +1,5 @@
 import { readAccounts } from "@/mocks/mockAccountStore";
-import {
-  apiRequest,
-  clearStoredSession,
-  getStoredUser,
-  setStoredToken,
-  setStoredUser,
-} from "@/services/apiClient";
+import { apiRequest, clearStoredSession, setStoredToken } from "@/services/apiClient";
 import type { Account, UserRole } from "@/types/account";
 import type { ApiResponse } from "@/types/api";
 import type { AuthUser } from "@/types/auth";
@@ -80,7 +74,6 @@ function mockAuthenticate(email: string, password: string): ApiResponse<AuthUser
       status: "active" as const,
     };
     const user = toAuthUserFromAccount(adminAccount);
-    setStoredUser(user);
     return { status: "success", data: user, message: "Login successful." };
   }
 
@@ -104,7 +97,6 @@ function mockAuthenticate(email: string, password: string): ApiResponse<AuthUser
   }
 
   const user = toAuthUserFromAccount(account);
-  setStoredUser(user);
   return { status: "success", data: user, message: "Login successful." };
 }
 
@@ -131,7 +123,6 @@ export async function login(email: string, password: string): Promise<ApiRespons
   if (response.status === "success" && response.data) {
     setStoredToken(response.data.token);
     const user = toAuthUserFromBackend(response.data.user);
-    setStoredUser(user);
     return { status: "success", data: user, message: response.message };
   }
 
@@ -155,11 +146,4 @@ export async function logout(): Promise<void> {
   } finally {
     clearStoredSession();
   }
-}
-
-/**
- * Returns the currently authenticated user from stored session.
- */
-export function getCurrentUser(): AuthUser | null {
-  return getStoredUser();
 }

@@ -1,12 +1,10 @@
 import type { ApiResponse } from "@/types/api";
-import type { AuthUser } from "@/types/auth";
 
 const TOKEN_KEY = "pharmasense_auth_token";
-const USER_KEY = "pharmasense_auth_user";
 
 export function getStoredToken(): string | null {
   try {
-    return localStorage.getItem(TOKEN_KEY);
+    return sessionStorage.getItem(TOKEN_KEY);
   } catch {
     return null;
   }
@@ -15,39 +13,17 @@ export function getStoredToken(): string | null {
 export function setStoredToken(token: string | null): void {
   try {
     if (token) {
-      localStorage.setItem(TOKEN_KEY, token);
+      sessionStorage.setItem(TOKEN_KEY, token);
     } else {
-      localStorage.removeItem(TOKEN_KEY);
+      sessionStorage.removeItem(TOKEN_KEY);
     }
   } catch {
     // Ignore storage quota or access errors in sandbox/private mode
   }
 }
 
-export function getStoredUser(): AuthUser | null {
-  try {
-    const raw = localStorage.getItem(USER_KEY);
-    return raw ? (JSON.parse(raw) as AuthUser) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function setStoredUser(user: AuthUser | null): void {
-  try {
-    if (user) {
-      localStorage.setItem(USER_KEY, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(USER_KEY);
-    }
-  } catch {
-    // Ignore storage quota or access errors
-  }
-}
-
 export function clearStoredSession(): void {
   setStoredToken(null);
-  setStoredUser(null);
 }
 
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined) || "";

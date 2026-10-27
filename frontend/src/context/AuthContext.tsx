@@ -1,10 +1,6 @@
 import { createContext, useState } from "react";
 import type { ReactElement, ReactNode } from "react";
-import {
-  getCurrentUser,
-  login as authenticate,
-  logout as authLogout,
-} from "@/services/authService";
+import { login as authenticate, logout as authLogout } from "@/services/authService";
 import type { ApiResponse } from "@/types/api";
 import type { AuthUser } from "@/types/auth";
 
@@ -21,13 +17,13 @@ interface AuthProviderProps {
 }
 
 /**
- * Provides authentication state to the application with persistent session support.
+ * Provides in-memory authentication state to the application.
  *
  * @param props - Provider children.
  * @returns The authentication context provider.
  */
 export function AuthProvider({ children }: AuthProviderProps): ReactElement {
-  const [user, setUser] = useState<AuthUser | null>(() => getCurrentUser());
+  const [user, setUser] = useState<AuthUser | null>(null);
 
   async function login(email: string, password: string): Promise<ApiResponse<AuthUser>> {
     const response = await authenticate(email, password);
